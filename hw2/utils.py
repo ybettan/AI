@@ -42,14 +42,16 @@ def run_with_limited_time(func, args, kwargs, time_limit):
     :param args: The functions args, given as tuple.
     :param kwargs: The functions keywords, given as dict.
     :param time_limit: The time limit in seconds (can be float).
-    :return: A tuple: The function's return value unchanged, and the running time for the function.
+    :return: A tuple: The function's return value unchanged, and the running 
+        time for the function.
     :raises PlayerExceededTimeError: If player exceeded its given time.
     """
     q = Queue()
     t = Thread(target=function_wrapper, args=(func, args, kwargs, q))
     t.start()
 
-    # This is just for limiting the runtime of the other thread, so we stop eventually.
+    # This is just for limiting the runtime of the other thread, so we stop 
+    #   eventually.
     # It doesn't really measure the runtime.
     t.join(time_limit)
 
@@ -62,6 +64,7 @@ def run_with_limited_time(func, args, kwargs, time_limit):
     return q_get
 
 
+
 class MiniMaxAlgorithm:
 
     def __init__(self, utility, my_color, no_more_time, selective_deepening):
@@ -69,8 +72,8 @@ class MiniMaxAlgorithm:
 
         :param utility: The utility function. Should have state as parameter.
         :param my_color: The color of the player who runs this MiniMax search.
-        :param no_more_time: A function that returns true if there is no more time to run this search, or false if
-                             there is still time left.
+        :param no_more_time: A function that returns true if there is no more 
+            time to run this search, or false if there is still time left.
         :param selective_deepening: A functions that gets the current state, and
                         returns True when the algorithm should continue the search
                         for the minimax value recursivly from this state.
@@ -86,10 +89,66 @@ class MiniMaxAlgorithm:
 
         :param state: The state to start from.
         :param depth: The maximum allowed depth for the algorithm.
-        :param maximizing_player: Whether this is a max node (True) or a min node (False).
-        :return: A tuple: (The min max algorithm value, The move in case of max node or None in min mode)
+        :param maximizing_player: Whether this is a max node (True) or a min 
+            node (False).
+        :return: A tuple: (The min max algorithm value, The move in case of 
+            max node or None in min mode)
         """
-        return self.utility(state), None
+
+        # for debugging
+        class InvalidMove:
+            pass
+
+        if self.no_more_time():
+            raise ExceededTimeError
+
+        possible_moves = state.get_possible_moves()
+
+        if self.no_more_time():
+            raise ExceededTimeError
+
+        # FIXME: remove
+        #possible_moves = []
+        #if state.left:
+        #    possible_moves.append(state.left)
+        #if state.right:
+        #    possible_moves.append(state.right)
+
+        if len(possible_moves) == 0 or depth == 0:
+                return self.utility(state), None
+
+        if maximizing_player:
+            cur_max = -INFINITY
+            best_move = ''
+            for move in possible_moves:
+                state_copy = copy.deepcopy(state)
+                #FIXME:remove
+                #c = move
+                c = state_copy.perform_move(move[0], move[1])
+                if not c:
+                    raise InvalidMove
+                v, m = self.search(c, depth-1, not maximizing_player)
+                if v > cur_max:
+                    cur_max = v
+                    best_move = move
+            if self.no_more_time():
+                raise ExceededTimeError
+            return cur_max, move
+        else:
+            cur_min = INFINITY
+            for move in possible_moves:
+                state_copy = copy.deepcopy(state)
+                #FIXME:remove
+                #c = move
+                c = state_copy.perform_move(move[0], move[1])
+                if not c:
+                    raise InvalidMove
+                v, m = self.search(c, depth-1, not maximizing_player)
+                cur_min = min(v, cur_min)
+            if self.no_more_time():
+                raise ExceededTimeError
+            return cur_min, None
+         
 
 
 class MiniMaxWithAlphaBetaPruning:
@@ -99,11 +158,11 @@ class MiniMaxWithAlphaBetaPruning:
 
         :param utility: The utility function. Should have state as parameter.
         :param my_color: The color of the player who runs this MiniMax search.
-        :param no_more_time: A function that returns true if there is no more time to run this search, or false if
-                             there is still time left.
+        :param no_more_time: A function that returns true if there is no more 
+            time to run this search, or false if there is still time left.
         :param selective_deepening: A functions that gets the current state, and
-                        returns True when the algorithm should continue the search
-                        for the minimax value recursivly from this state.
+            returns True when the algorithm should continue the search for the 
+            minimax value recursivly from this state.
         """
         self.utility = utility
         self.my_color = my_color
@@ -117,7 +176,15 @@ class MiniMaxWithAlphaBetaPruning:
         :param depth: The maximum allowed depth for the algorithm.
         :param alpha: The alpha of the alpha-beta pruning.
         :param beta: The beta of the alpha-beta pruning.
-        :param maximizing_player: Whether this is a max node (True) or a min node (False).
-        :return: A tuple: (The alpha-beta algorithm value, The move in case of max node or None in min mode)
+        :param maximizing_player: Whether this is a max node (True) or a min 
+            node (False).
+        :return: A tuple: (The alpha-beta algorithm value, The move in case of 
+            max node or None in min mode)
         """
         return self.utility(state), None
+
+
+
+
+
+

@@ -95,7 +95,7 @@ class MiniMaxAlgorithm:
             max node or None in min mode)
         """
 
-        # for debugging
+        # for debugging 
         class InvalidMove:
             pass
 
@@ -107,7 +107,7 @@ class MiniMaxAlgorithm:
         if self.no_more_time():
             raise ExceededTimeError
 
-        # FIXME: remove
+        #FIXME: remove
         #possible_moves = []
         #if state.left:
         #    possible_moves.append(state.left)
@@ -115,7 +115,7 @@ class MiniMaxAlgorithm:
         #    possible_moves.append(state.right)
 
         if len(possible_moves) == 0 or depth == 0:
-                return self.utility(state), None
+            return self.utility(state), None
 
         if maximizing_player:
             cur_max = -INFINITY
@@ -123,11 +123,11 @@ class MiniMaxAlgorithm:
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 #FIXME:remove
-                #c = move
+                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
                     raise InvalidMove
-                v, m = self.search(c, depth-1, not maximizing_player)
+                v, m = self.search(state_copy, depth-1, not maximizing_player)
                 if v > cur_max:
                     cur_max = v
                     best_move = move
@@ -139,11 +139,11 @@ class MiniMaxAlgorithm:
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 #FIXME:remove
-                #c = move
+                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
                     raise InvalidMove
-                v, m = self.search(c, depth-1, not maximizing_player)
+                v, m = self.search(state_copy, depth-1, not maximizing_player)
                 cur_min = min(v, cur_min)
             if self.no_more_time():
                 raise ExceededTimeError
@@ -181,7 +181,67 @@ class MiniMaxWithAlphaBetaPruning:
         :return: A tuple: (The alpha-beta algorithm value, The move in case of 
             max node or None in min mode)
         """
-        return self.utility(state), None
+        # for debugging 
+        class InvalidMove:
+            pass
+
+        if self.no_more_time():
+            raise ExceededTimeError
+
+        possible_moves = state.get_possible_moves()
+
+        if self.no_more_time():
+            raise ExceededTimeError
+
+        # FIXME: remove
+        #possible_moves = []
+        #if state.left:
+        #    possible_moves.append(state.left)
+        #if state.right:
+        #    possible_moves.append(state.right)
+
+        if len(possible_moves) == 0 or depth == 0:
+            return self.utility(state), None
+
+        if maximizing_player:
+            cur_max = -INFINITY
+            best_move = ''
+            for move in possible_moves:
+                state_copy = copy.deepcopy(state)
+                #FIXME:remove
+                #state_copy = move
+                c = state_copy.perform_move(move[0], move[1])
+                if not c:
+                    raise InvalidMove
+                v, m = self.search(state_copy, depth-1, alpha, beta, \
+                        not maximizing_player)
+                if v > cur_max:
+                    cur_max = v
+                    best_move = move
+                alpha = max(cur_max, alpha)
+                if cur_max >= beta:
+                    return INFINITY, None
+            if self.no_more_time():
+                raise ExceededTimeError
+            return cur_max, move
+        else:
+            cur_min = INFINITY
+            for move in possible_moves:
+                state_copy = copy.deepcopy(state)
+                #FIXME:remove
+                #state_copy = move
+                c = state_copy.perform_move(move[0], move[1])
+                if not c:
+                    raise InvalidMove
+                v, m = self.search(state_copy, depth-1, alpha, beta, \
+                        not maximizing_player)
+                cur_min = min(v, cur_min)
+                beta = min(cur_min, beta)
+                if cur_min <= alpha:
+                    return -INFINITY,None
+            if self.no_more_time():
+                raise ExceededTimeError
+            return cur_min, None
 
 
 

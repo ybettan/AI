@@ -32,7 +32,7 @@ def main():
     #print("full_players[0] = {}\nfull_players[1] = {}".format(full_players[0], full_players[1]))
     #print("players[0] = {}\nplayers[1] = {}".format(players[0], players[1]))
     res = {players[0]:0, players[1]:0, TIE:0}
-    for i in range(10):
+    for i in range(1):
         tmp = str(subprocess.check_output(["python", "run_game.py", "2", "10", "5", \
                                   "n", full_players[0], full_players[1] ]))
 

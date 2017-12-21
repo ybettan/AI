@@ -3,16 +3,30 @@
 # Imports
 #===============================================================================
 
+import sys
+import re
 import abstract
 from utils import INFINITY, run_with_limited_time, ExceededTimeError
-from Reversi.consts import EM, OPPONENT_COLOR, BOARD_COLS, BOARD_ROWS
+from Reversi.consts import EM, OPPONENT_COLOR, BOARD_COLS, BOARD_ROWS, O_PLAYER
+from Reversi.board import GameState
 import time
 import copy
 from collections import defaultdict
 
+
+TO_LETTER = {'1':'a', '2':'b', '3':'c', '4':'d', '5':'e', '6':'f', '7':'g', \
+             '8':'h'}
+TO_DIGIT = {'a':'1', 'b':'2', 'c':'3', 'd':'4', 'e':'5', 'f':'6', 'g':'7', \
+            'h':'8'}
+REVERSE_LETTER = {'a':'h', 'b':'g', 'c':'f', 'd':'e', 'e':'d', \
+                  'f':'c', 'g':'b', 'h':'a'}
+
 #===============================================================================
 # Player
 #===============================================================================
+
+class ImpossibleBoardTransform:
+    pass
 
 class Player(abstract.AbstractPlayer):
     '''
@@ -21,32 +35,110 @@ class Player(abstract.AbstractPlayer):
     FIXME: remove the comment if i changed anything
     '''
     def __init__(self, setup_time, player_color, time_per_k_turns, k):
-        abstract.AbstractPlayer.__init__(self, setup_time, player_color, time_per_k_turns, k)
+        abstract.AbstractPlayer.__init__(self, setup_time, player_color, \
+                time_per_k_turns, k)
         self.clock = time.time()
 
-        # We are simply providing (remaining time / remaining turns) for each turn in round.
+        # We are simply providing (remaining time / remaining turns) for each \
+        #       turn in round.
         # Taking a spare time of 0.05 seconds.
         self.turns_remaining_in_round = self.k
         self.time_remaining_in_round = self.time_per_k_turns
-        self.time_for_current_move = self.time_remaining_in_round / self.turns_remaining_in_round - 0.05
+        self.time_for_current_move = self.time_remaining_in_round / \
+                self.turns_remaining_in_round - 0.05
+        # keep the game-moves as a string
+        self.moves = ''
+        self.last_state = GameState()
+
+        # chose board configuration
+        if self.color == O_PLAYER:
+            # will be set after opponent first move
+            self.book2reality = None
+            self.reality2book = None
+        else:
+            self.book2reality = self.book2reality1
+            self.reality2book = self.reality2book1
+
+        # create opening book
+        opening_book = {}
+        f = open("best_70_opens.gam", 'r')
+        # FIXME: remove error check before submmision
+        if not f:
+            print("cannot open file")
+            sys.exit(1)
+
+        # assume we play first and update otherwise
+        first_move_index = 0
+        if self.color == O_PLAYER:
+            first_move_index = 1
+
+        for line in f:
+            tmp = line.split(' ')[1]
+            tmp = re.split(r'[+-]', tmp)
+            moves = ''.join(tmp)
+            for i in range(first_move_index, 10, 2):
+                tmp = re.split('r[+-]', moves)
+                key = moves[0:2*i]
+                if key not in opening_book:
+                    opening_book[key] = moves[2*i:2*i+2]
+        f.close()
+        self.opening_book = opening_book
 
     def get_move(self, game_state, possible_moves):
         self.clock = time.time()
-        self.time_for_current_move = self.time_remaining_in_round / self.turns_remaining_in_round - 0.05
-        if len(possible_moves) == 1:
-            return possible_moves[0]
+        self.time_for_current_move = self.time_remaining_in_round / \
+                self.turns_remaining_in_round - 0.05
 
-        best_move = possible_moves[0]
-        next_state = copy.deepcopy(game_state)
-        next_state.perform_move(best_move[0],best_move[1])
-        # Choosing an arbitrary move
-        # Get the best move according the utility function
-        for move in possible_moves:
-            new_state = copy.deepcopy(game_state)
-            new_state.perform_move(move[0],move[1])
-            if self.utility(new_state) > self.utility(next_state):
-                next_state = new_state
-                best_move = move
+        # discover last move done by opponent
+        opponent_move_str_format = ''
+        for x in range(BOARD_COLS):
+            for y in range(BOARD_ROWS):
+                if self.last_state.board[x][y]==EM and game_state.board[x][y]!=EM:
+                    opponent_move_str_format = TO_LETTER[str(x+1)] + str(y+1)
+        
+        # chose the board_configuration - firs opponent move became 'd3' in 
+        # oppening book
+        if self.book2reality == None:
+            if opponent_move_str_format == 'd6':
+                self.book2reality = self.book2reality1
+                self.reality2book = self.reality2book1
+            elif opponent_move_str_format == 'e3':
+                self.book2reality = self.book2reality2
+                self.reality2book = self.reality2book2
+            elif opponent_move_str_format == 'c5':
+                self.book2reality = self.book2reality3
+                self.reality2book = self.reality2book3
+            elif opponent_move_str_format == 'f4':
+                self.book2reality = self.book2reality4
+                self.reality2book = self.reality2book4
+            else:
+                raise ImpossibleBoardTransform
+
+        # append opponent move to self.moves - this will represent the key.
+        # if we play first we will append '' to '' (nothing will hapen)
+        self.moves += self.reality2book(opponent_move_str_format)
+
+        # find the best move
+        best_move = []
+        if len(possible_moves) == 1:
+            best_move =  possible_moves[0]
+        else:
+            # check if next move can be determined from oppening book
+            oppening_book_res = self.opening_move()
+            if oppening_book_res != None:
+                best_move = oppening_book_res
+            else:
+                best_move = possible_moves[0]
+                next_state = copy.deepcopy(game_state)
+                next_state.perform_move(best_move[0],best_move[1])
+                # Choosing an arbitrary move
+                # Get the best move according the utility function
+                for move in possible_moves:
+                    new_state = copy.deepcopy(game_state)
+                    new_state.perform_move(move[0],move[1])
+                    if self.utility(new_state) > self.utility(next_state):
+                        next_state = new_state
+                        best_move = move
 
         if self.turns_remaining_in_round == 1:
             self.turns_remaining_in_round = self.k
@@ -55,8 +147,70 @@ class Player(abstract.AbstractPlayer):
             self.turns_remaining_in_round -= 1
             self.time_remaining_in_round -= (time.time() - self.clock)
 
+        to_be_append = TO_LETTER[str(best_move[0]+1)] + str(best_move[1]+1)
+        self.moves += self.reality2book(to_be_append)
+        game_state_copy = copy.deepcopy(game_state)
+        game_state_copy.perform_move(best_move[0], best_move[1])
+        self.last_state = game_state_copy
+
         return best_move
 
+    def opening_move(self):
+
+        # check if we can find the next move in the oppening book
+        if self.moves not in self.opening_book:
+            return None
+
+        res = self.book2reality(self.opening_book[self.moves])
+        return [int(TO_DIGIT[res[0]])-1, int(res[1])-1]
+        
+    def book2reality1(self, str_move):
+        old_digit = str_move[1]
+        old_letter = str_move[0]
+        new_digit = str(BOARD_ROWS-int(old_digit)+1)
+        new_letter = old_letter
+        return new_letter + new_digit
+
+    def reality2book1(self, str_move):
+        if str_move == '':
+            return ''
+        return self.book2reality1(str_move)
+        
+    def book2reality2(self, str_move):
+        old_digit = str_move[1]
+        old_letter = str_move[0]
+        new_digit = old_digit
+        new_letter = REVERSE_LETTER[old_letter]
+        return new_letter + new_digit
+
+    def reality2book2(self, str_move):
+        if str_move == '':
+            return ''
+        return self.book2reality2(str_move)
+
+    def book2reality3(self, str_move):
+        old_digit = str_move[1]
+        old_letter = str_move[0]
+        new_digit = TO_LETTER[old_digit]
+        new_letter = TO_DIGIT[REVERSE_LETTER[old_letter]]
+        return new_digit + new_letter
+
+    def reality2book3(self, str_move):
+        if str_move == '':
+            return ''
+        return self.book2reality4(str_move)
+
+    def book2reality4(self, str_move):
+        old_digit = str_move[1]
+        old_letter = str_move[0]
+        new_digit = REVERSE_LETTER[TO_LETTER[old_digit]]
+        new_letter = TO_DIGIT[old_letter]
+        return new_digit + new_letter
+
+    def reality2book4(self, str_move):
+        if str_move == '':
+            return ''
+        return self.book2reality3(str_move)
 #------------------------------------------------------------------------------
 
     def __end_utility(self, state):
@@ -197,8 +351,6 @@ class Player(abstract.AbstractPlayer):
         mobility_res = self.__mobility_utility(state) 
         score_res = self.__score_utility(state)
         #FIXME: give different whigts according to T 
-        #print("mobility_res = {}".format(mobility_res))
-        #print("score_res = {}\n".format(score_res))
         return mobility_res*mobility_fac + score_res*score_fac
 #------------------------------------------------------------------------------
 

@@ -1,5 +1,4 @@
-t,2,10,50
-simple_player,0.0,0,0
-better_player,6.0,0,0
-min_max_player,0,0,0
-alpha_beta_player,0,0,0
+t,simple_player,better_player,min_max_player,alpha_beta_player
+2,0.0,6.0,0,0
+10,0,0,0,0
+50,0,0,0,0

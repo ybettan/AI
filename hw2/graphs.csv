@@ -1,0 +1,4 @@
+t,simple_player,better_player,min_max_player,alpha_beta_player
+2,0.0,6.0,0,0
+10,0,0,0,0
+50,0,0,0,0

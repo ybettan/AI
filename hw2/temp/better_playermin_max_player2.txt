@@ -1,5 +1,2 @@
-The winner is X better
-The winner is X better
-The winner is X better
-The winner is X better
-The winner is X better
+Player X better exceeded resources.
+The winner is O min_max

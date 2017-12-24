@@ -127,6 +127,7 @@ res6 = mma.search(root2, 10, False)
 asssert(res5[0] == 13)
 asssert(res6[0] == 10)
 
+
 # check alpha betta
 abp = MiniMaxWithAlphaBetaPruning(utility, 'X', no_more_time2, None)
 

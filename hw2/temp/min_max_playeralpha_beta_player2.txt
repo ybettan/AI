@@ -1,5 +1,2 @@
-The winner is O alpha_beta
-The winner is O alpha_beta
-The winner is O alpha_beta
-The winner is O alpha_beta
+Player X min_max exceeded resources.
 The winner is O alpha_beta

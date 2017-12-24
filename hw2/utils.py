@@ -5,6 +5,8 @@ from threading import Thread
 from multiprocessing import Queue
 import time
 import copy
+import sys
+from Reversi.consts import *
 
 INFINITY = float(6000)
 
@@ -75,9 +77,9 @@ class MiniMaxAlgorithm:
         :param no_more_time: A function that returns true if there is no more 
             time to run this search, or false if there is still time left.
         :param selective_deepening: A functions that gets the current state, and
-                        returns True when the algorithm should continue the search
-                        for the minimax value recursivly from this state.
-                        optional
+            returns True when the algorithm should continue the search for the 
+            minimax value recursivly from this state.
+            optional
         """
         self.utility = utility
         self.my_color = my_color
@@ -95,10 +97,6 @@ class MiniMaxAlgorithm:
             max node or None in min mode)
         """
 
-        # for debugging 
-        class InvalidMove:
-            pass
-
         if self.no_more_time():
             raise ExceededTimeError
 
@@ -107,48 +105,53 @@ class MiniMaxAlgorithm:
         if self.no_more_time():
             raise ExceededTimeError
 
-        #FIXME: remove
-        #possible_moves = []
-        #if state.left:
-        #    possible_moves.append(state.left)
-        #if state.right:
-        #    possible_moves.append(state.right)
+        # if all moves where played - count result
+        if len(possible_moves) == 0:
+            my_u = 0
+            op_u = 0
+            for x in range(BOARD_COLS):
+                for y in range(BOARD_ROWS):
+                    if state.board[x][y] == self.my_color:
+                        my_u += 1
+                    if state.board[x][y] == OPPONENT_COLOR[self.my_color]:
+                        op_u += 1
+            return my_u - op_u, None
 
-        if len(possible_moves) == 0 or depth == 0:
+        # if we have reached max depth return huristic function
+        if depth == 0:
             return self.utility(state), None
 
+        best_move = None
         if maximizing_player:
-            cur_max = -INFINITY
-            best_move = ''
+            curr_max = -INFINITY
+
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                #FIXME:remove
-                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
-                    raise InvalidMove
-                v, m = self.search(state_copy, depth-1, not maximizing_player)
-                if v > cur_max:
-                    cur_max = v
+                    print("invalid move at utils/MinMaxAlgorithm.search()")
+                    sys.exit(1)
+                v, _ = self.search(state_copy, depth-1, not maximizing_player)
+                if v > curr_max:
+                    curr_max = v
                     best_move = move
             if self.no_more_time():
                 raise ExceededTimeError
-            return cur_max, move
+            return curr_max, best_move
         else:
-            cur_min = INFINITY
+            curr_min = INFINITY
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                #FIXME:remove
-                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
-                    raise InvalidMove
-                v, m = self.search(state_copy, depth-1, not maximizing_player)
-                cur_min = min(v, cur_min)
+                    print("invalid move at utils/MinMaxAlgorithm.search()")
+                    sys.exit(1)
+                v, _ = self.search(state_copy, depth-1, not maximizing_player)
+                curr_min = min(v, curr_min)
             if self.no_more_time():
                 raise ExceededTimeError
-            return cur_min, None
-         
+            return curr_min, None
+        
 
 
 class MiniMaxWithAlphaBetaPruning:
@@ -163,6 +166,7 @@ class MiniMaxWithAlphaBetaPruning:
         :param selective_deepening: A functions that gets the current state, and
             returns True when the algorithm should continue the search for the 
             minimax value recursivly from this state.
+            optional
         """
         self.utility = utility
         self.my_color = my_color
@@ -181,9 +185,6 @@ class MiniMaxWithAlphaBetaPruning:
         :return: A tuple: (The alpha-beta algorithm value, The move in case of 
             max node or None in min mode)
         """
-        # for debugging 
-        class InvalidMove:
-            pass
 
         if self.no_more_time():
             raise ExceededTimeError
@@ -193,58 +194,45 @@ class MiniMaxWithAlphaBetaPruning:
         if self.no_more_time():
             raise ExceededTimeError
 
-        # FIXME: remove
-        #possible_moves = []
-        #if state.left:
-        #    possible_moves.append(state.left)
-        #if state.right:
-        #    possible_moves.append(state.right)
-
         if len(possible_moves) == 0 or depth == 0:
             return self.utility(state), None
 
+        best_move = None
         if maximizing_player:
-            cur_max = -INFINITY
-            best_move = ''
+            curr_max = -INFINITY
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                #FIXME:remove
-                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
-                    raise InvalidMove
-                v, m = self.search(state_copy, depth-1, alpha, beta, \
+                    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
+                    sys.exit(1)
+                v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
-                if v > cur_max:
-                    cur_max = v
+                #FIXME:remove
+                #print("move =", move, "val =", v)
+                if v > curr_max:
+                    curr_max = v
                     best_move = move
-                alpha = max(cur_max, alpha)
-                if cur_max >= beta:
+                alpha = max(curr_max, alpha)
+                if curr_max >= beta:
                     return INFINITY, None
             if self.no_more_time():
                 raise ExceededTimeError
-            return cur_max, move
+            return curr_max, best_move
         else:
-            cur_min = INFINITY
+            curr_min = INFINITY
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                #FIXME:remove
-                #state_copy = move
                 c = state_copy.perform_move(move[0], move[1])
                 if not c:
-                    raise InvalidMove
-                v, m = self.search(state_copy, depth-1, alpha, beta, \
+                    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
+                    sys.exit(1)
+                v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
-                cur_min = min(v, cur_min)
-                beta = min(cur_min, beta)
-                if cur_min <= alpha:
+                curr_min = min(v, curr_min)
+                beta = min(curr_min, beta)
+                if curr_min <= alpha:
                     return -INFINITY,None
             if self.no_more_time():
                 raise ExceededTimeError
-            return cur_min, None
-
-
-
-
-
-
+            return curr_min, None

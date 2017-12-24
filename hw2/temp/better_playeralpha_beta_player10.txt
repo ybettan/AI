@@ -1,5 +1,3 @@
-The winner is O alpha_beta
-The winner is O alpha_beta
-The winner is O alpha_beta
-The winner is O alpha_beta
-The winner is O alpha_beta
+The winner is X better
+eeded resources.
+The winner is X better

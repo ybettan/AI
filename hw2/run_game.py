@@ -16,9 +16,11 @@ class GameRunner:
         :param time_per_k_turns: Time allowed per k moves in seconds.
             The interactive player always gets infinite time to decide, no matter what.
         :param k: The k turns we measure time on. Must be a positive integer.
-        :param verbose: preference of printing the board each turn. 'y' - yes, print. 'n' - no,  don't print.
-        :param x_player: The name of the module containing the x player. E.g. "myplayer" will invoke an
-            equivalent to "import players.myplayer" in the code.
+        :param verbose: preference of printing the board each turn. 'y' - yes, \
+                print. 'n' - no,  don't print.
+        :param x_player: The name of the module containing the x player. \
+                E.g. "myplayer" will invoke an equivalent to \
+                "import players.myplayer" in the code.
         :param o_player: Same as 'x_player' parameter, but for the other player.
         """
 
@@ -42,15 +44,18 @@ class GameRunner:
         }
 
     def setup_player(self, player_class, player_type):
-        """ An auxiliary function to populate the players list, and measure setup times on the go.
+        """ An auxiliary function to populate the players list, and measure \
+                setup times on the go.
 
-        :param player_class: The player class that should be initialized, measured and put into the list.
+        :param player_class: The player class that should be initialized, \
+                measured and put into the list.
         :param player_type: Player type, passed as an argument to the player.
         :return: A boolean. True if the player exceeded the given time. False otherwise.
         """
         try:
             player, measured_time = utils.run_with_limited_time(
-                player_class, (self.setup_time, player_type, self.time_per_k_turns, self.k), {}, self.setup_time*1.5)
+                player_class, (self.setup_time, player_type, \
+                        self.time_per_k_turns, self.k), {}, self.setup_time*1.5)
         except MemoryError:
             return True
 
@@ -87,7 +92,8 @@ class GameRunner:
                     break
                 # Get move from player
                 move, run_time = utils.run_with_limited_time(
-                    player.get_move, (copy.deepcopy(board_state), possible_moves), {}, remaining_run_time*1.5) ###
+                    player.get_move, (copy.deepcopy(board_state), \
+                            possible_moves), {}, remaining_run_time*1.5) ###
                 
                 remaining_run_times[board_state.curr_player] -= run_time
                 if remaining_run_times[board_state.curr_player] < 0:
@@ -99,7 +105,8 @@ class GameRunner:
             
             board_state.perform_move(move[0],move[1])
             if self.verbose == 'y':
-                print('Player ' + repr(player) + ' performed the move: [' + str(move[0]) + ', ' + str(move[1]) + ']')
+                print('Player ' + repr(player) + ' performed the move: [' + \
+                        str(move[0]) + ', ' + str(move[1]) + ']')
             
             
             if board_state.curr_player == X_PLAYER:

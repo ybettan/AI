@@ -1,0 +1,2 @@
+1. alpha_beta search somtimes return None move and that cause problems and 
+    not supposed to happen

@@ -3,7 +3,6 @@
 # Imports
 #===============================================================================
 
-import sys
 import abstract
 from utils import INFINITY, run_with_limited_time, ExceededTimeError, \
         MiniMaxAlgorithm, MiniMaxWithAlphaBetaPruning
@@ -35,24 +34,27 @@ class Player(abstract.AbstractPlayer):
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
 
-        last_minimax_move = ''
-        alpha = -INFINITY
+        #FIXME:remove
+        print("possible_moves =", possible_moves)
+
+        if len(possible_moves) == 1:
+            return possible_moves[0]
+
         curr_depth = 1
         abp = MiniMaxWithAlphaBetaPruning(self.utility, self.color, \
                 self.no_more_time, None)
 
         while True:
             try:
-                val, last_minimax_move = abp.search(game_state, \
-                        curr_depth, alpha, INFINITY, True)
-                if val > alpha:
-                    alpha = val
+                _, last_abp_move = abp.search(game_state, \
+                        curr_depth, -INFINITY, INFINITY, True)
+                #FIXME: remove
+                #print("===================================")
+                print(last_abp_move, "depth =", curr_depth, "val =", _)
+                #print("===================================")
                 curr_depth += 1
             except ExceededTimeError:
                 break
-            #except:
-            #    print("WHAT HAPPEND?")
-            #    sys.exit(1)
 
         if self.turns_remaining_in_round == 1:
             self.turns_remaining_in_round = self.k
@@ -61,8 +63,7 @@ class Player(abstract.AbstractPlayer):
             self.turns_remaining_in_round -= 1
             self.time_remaining_in_round -= (time.time() - self.clock)
 
-        return possible_moves[0]
-        #return last_minimax_move
+        return last_abp_move
 
     def utility(self, state):
         if len(state.get_possible_moves()) == 0:

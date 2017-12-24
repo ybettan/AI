@@ -119,7 +119,6 @@ class Player(abstract.AbstractPlayer):
         self.moves += self.reality2book(opponent_move_str_format)
 
         # find the best move
-        best_move = []
         if len(possible_moves) == 1:
             best_move =  possible_moves[0]
         else:

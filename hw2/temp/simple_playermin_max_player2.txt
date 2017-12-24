@@ -1,5 +1,3 @@
 The game ended in a tie!
-The game ended in a tie!
-The game ended in a tie!
-The game ended in a tie!
-The game ended in a tie!
+ resources.
+The winner is X simple

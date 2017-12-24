@@ -4,11 +4,13 @@
 #===============================================================================
 
 import abstract
-from utils import INFINITY, run_with_limited_time, ExceededTimeError, MiniMaxAlgorithm
+from utils import INFINITY, run_with_limited_time, ExceededTimeError, \
+        MiniMaxAlgorithm
 from Reversi.consts import EM, OPPONENT_COLOR, BOARD_COLS, BOARD_ROWS
 import time
 import copy
 from collections import defaultdict
+import sys
 
 #===============================================================================
 # Player
@@ -33,15 +35,31 @@ class Player(abstract.AbstractPlayer):
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
 
-        last_minimax_move = ''
+        #FIXME:remove
+        assert(possible_moves)
+        print("possible_moves =", possible_moves)
+
+        if len(possible_moves) == 1:
+            return possible_moves[0]
+
         curr_depth = 1
         mini_max = MiniMaxAlgorithm(self.utility, self.color, \
                 self.no_more_time, None)
 
-        while True:
+        # compute upper bound for the number of steps left
+        max_steps_left = 0
+        for x in range(BOARD_COLS):
+            for y in range(BOARD_ROWS):
+                if game_state.board[x][y] == EM:
+                    max_steps_left += 1
+
+        # there is maximum max_steps_left steps in the game
+        while curr_depth < max_steps_left:
             try:
                 _, last_minimax_move = mini_max.search(game_state, \
                         curr_depth, True)
+                #FIXME: remove
+                print(last_minimax_move, "depth =", curr_depth, "val =", _)
                 curr_depth += 1
             except ExceededTimeError:
                 break
@@ -57,6 +75,9 @@ class Player(abstract.AbstractPlayer):
 
     def utility(self, state):
         if len(state.get_possible_moves()) == 0:
+            #FIXME:remove
+            print("we shouldn't arrive here")
+            sys.exit(1)
             return INFINITY if state.curr_player != self.color else -INFINITY
 
         my_u = 0

@@ -10,6 +10,7 @@ from Reversi.consts import EM, OPPONENT_COLOR, BOARD_COLS, BOARD_ROWS
 import time
 import copy
 from collections import defaultdict
+import sys
 
 #===============================================================================
 # Player
@@ -29,29 +30,29 @@ class Player(abstract.AbstractPlayer):
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
 
+        self.alpha_beta_algorithm = MiniMaxWithAlphaBetaPruning(self.utility, \
+                self.color, self.no_more_time, None)
+
+        # for performence
+        self.max_steps_left = 62
+
     def get_move(self, game_state, possible_moves):
         self.clock = time.time()
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
 
-        #FIXME:remove
-        print("possible_moves =", possible_moves)
+        self.max_steps_left -= 2
 
         if len(possible_moves) == 1:
             return possible_moves[0]
 
         curr_depth = 1
-        abp = MiniMaxWithAlphaBetaPruning(self.utility, self.color, \
-                self.no_more_time, None)
 
-        while True:
+        # there is maximum max_steps_left steps in the game
+        while curr_depth < self.max_steps_left:
             try:
-                _, last_abp_move = abp.search(game_state, \
-                        curr_depth, -INFINITY, INFINITY, True)
-                #FIXME: remove
-                #print("===================================")
-                print(last_abp_move, "depth =", curr_depth, "val =", _)
-                #print("===================================")
+                _, last_abp_move = self.alpha_beta_algorithm.search( \
+                        game_state, curr_depth, -INFINITY, INFINITY, True)
                 curr_depth += 1
             except ExceededTimeError:
                 break

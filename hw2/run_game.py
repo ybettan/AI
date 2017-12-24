@@ -98,6 +98,7 @@ class GameRunner:
                 remaining_run_times[board_state.curr_player] -= run_time
                 if remaining_run_times[board_state.curr_player] < 0:
                     raise utils.ExceededTimeError
+            # NOTE: all exception are time exceptions
             except (utils.ExceededTimeError, MemoryError):
                 print('Player {} exceeded resources.'.format(player))
                 winner = self.make_winner_result(OPPONENT_COLOR[board_state.curr_player])

@@ -1,2 +1,0 @@
-Player X better exceeded resources.
-The winner is O alpha_beta

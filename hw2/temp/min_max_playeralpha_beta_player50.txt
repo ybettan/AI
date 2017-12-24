@@ -1,4 +1,0 @@
-The winner is X min_max
-p_time time_per_k_turns k verbose x_player o_player
-For example: run_game.py 2 10 5 y interactive random_player
-Please read the docs in the code for more info.

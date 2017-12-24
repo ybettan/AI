@@ -127,10 +127,15 @@ class MiniMaxAlgorithm:
 
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                c = state_copy.perform_move(move[0], move[1])
-                if not c:
-                    print("invalid move at utils/MinMaxAlgorithm.search()")
-                    sys.exit(1)
+                state_copy.perform_move(move[0], move[1])
+
+                if self.no_more_time():
+                    raise ExceededTimeError
+                #FIXME: remove
+                #c = state_copy.perform_move(move[0], move[1])
+                #if not c:
+                #    print("invalid move at utils/MinMaxAlgorithm.search()")
+                #    sys.exit(1)
                 v, _ = self.search(state_copy, depth-1, not maximizing_player)
                 if v > curr_max:
                     curr_max = v
@@ -142,10 +147,14 @@ class MiniMaxAlgorithm:
             curr_min = INFINITY
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                c = state_copy.perform_move(move[0], move[1])
-                if not c:
-                    print("invalid move at utils/MinMaxAlgorithm.search()")
-                    sys.exit(1)
+                state_copy.perform_move(move[0], move[1])
+                if self.no_more_time():
+                    raise ExceededTimeError
+                #FIXME:remove
+                #c = state_copy.perform_move(move[0], move[1])
+                #if not c:
+                #    print("invalid move at utils/MinMaxAlgorithm.search()")
+                #    sys.exit(1)
                 v, _ = self.search(state_copy, depth-1, not maximizing_player)
                 curr_min = min(v, curr_min)
             if self.no_more_time():
@@ -194,22 +203,39 @@ class MiniMaxWithAlphaBetaPruning:
         if self.no_more_time():
             raise ExceededTimeError
 
-        if len(possible_moves) == 0 or depth == 0:
+        # if all moves where played - count result
+        if len(possible_moves) == 0:
+            my_u = 0
+            op_u = 0
+            for x in range(BOARD_COLS):
+                for y in range(BOARD_ROWS):
+                    if state.board[x][y] == self.my_color:
+                        my_u += 1
+                    if state.board[x][y] == OPPONENT_COLOR[self.my_color]:
+                        op_u += 1
+            return my_u - op_u, None
+
+        # if we have reached max depth return huristic function
+        if depth == 0:
             return self.utility(state), None
 
         best_move = None
         if maximizing_player:
             curr_max = -INFINITY
+            
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                c = state_copy.perform_move(move[0], move[1])
-                if not c:
-                    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
-                    sys.exit(1)
+                state_copy.perform_move(move[0], move[1])
+
+                if depth == 0:
+                    return self.utility(state), None
+                #FIXME:remove
+                #c = state_copy.perform_move(move[0], move[1])
+                #if not c:
+                #    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
+                #    sys.exit(1)
                 v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
-                #FIXME:remove
-                #print("move =", move, "val =", v)
                 if v > curr_max:
                     curr_max = v
                     best_move = move
@@ -223,10 +249,15 @@ class MiniMaxWithAlphaBetaPruning:
             curr_min = INFINITY
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
-                c = state_copy.perform_move(move[0], move[1])
-                if not c:
-                    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
-                    sys.exit(1)
+                state_copy.perform_move(move[0], move[1])
+
+                if depth == 0:
+                    return self.utility(state), None
+                #FIXME:remove
+                #c = state_copy.perform_move(move[0], move[1])
+                #if not c:
+                #    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
+                #    sys.exit(1)
                 v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
                 curr_min = min(v, curr_min)

@@ -25,8 +25,12 @@ REVERSE_LETTER = {'a':'h', 'b':'g', 'c':'f', 'd':'e', 'e':'d', \
 # Player
 #===============================================================================
 
-class ImpossibleBoardTransform:
+class ImpossibleBoardTransform(Exception):
     pass
+
+class NonEdgeIndex(Exception):
+    pass
+
 
 class Player(abstract.AbstractPlayer):
     '''
@@ -223,9 +227,6 @@ class Player(abstract.AbstractPlayer):
                     op_u += 1
 
         return my_u - op_u
-
-    class NonEdgeIndex:
-        pass
 
     def __is_stable(self, state, J, I):
 

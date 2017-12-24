@@ -1,2 +1,0 @@
-Player O better exceeded resources.
-The winner is X min_max

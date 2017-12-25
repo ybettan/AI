@@ -33,7 +33,7 @@ def callto(opponent):
             call(['python', 'run_game.py', '2', t, '5', 'n', \
                     'competition_player', opponent], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n competition_player {}\t\t--> {} sec'\
+            print('python run_game.py 2 {} 5 n competition_player {}\t--> {} sec'\
                     .format(t, opponent, end-start))
 
             file.close()
@@ -47,7 +47,7 @@ def callto(opponent):
             call(['python', 'run_game.py', '2', t, '5', 'n', \
                     opponent, 'competition_player'], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n {} competition_player\t\t--> {} sec'\
+            print('python run_game.py 2 {} 5 n {} competition_player\t--> {} sec'\
                     .format(t, opponent, end-start))
 
             counter += 2

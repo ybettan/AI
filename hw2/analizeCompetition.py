@@ -25,12 +25,8 @@ def create_fianl_reult_and_csv_file():
         for p2 in players:
             if p1 == p2 or (p1 != 'competition_player' and p2 != 'competition_player'):
                 continue
-            #if p1 == 'competitioin_player' and p2 == 'competitioin_player':
-            #    continue
             for time in times:
                 for it in iterations:
-                    #file_name = 'temp/' + p1 + "_" + p2 + "_time_" + time + \
-                    #        "_iteration_" + it + '.txt'
                     filename = "competition/{}_VS_{}_time_{}_iteration_{}.txt"\
                             .format(p1, p2, time, it)
                     num_of_files += 1

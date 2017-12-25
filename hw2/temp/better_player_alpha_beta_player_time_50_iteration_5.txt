@@ -1,1 +1,1 @@
-The winner is O alpha_beta
+The winner is X better

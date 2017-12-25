@@ -25,7 +25,7 @@ def callto(opponent):
         for it in iterations:
 
             # competition VS opponent
-            filename = "competition/competition_VS_{}_time_{}_iteration_{}.txt" \
+            filename = "competition/competition_player_VS_{}_time_{}_iteration_{}.txt" \
                     .format(opponent, t, it)
             file = open(filename, 'w+')
 
@@ -33,13 +33,13 @@ def callto(opponent):
             call(['python', 'run_game.py', '2', t, '5', 'n', \
                     'competition_player', opponent], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n competition_player {}\t\t--> {} sec'\
+            print('python run_game.py 2 {} 5 n competition_player {}\t--> {} sec'\
                     .format(t, opponent, end-start))
 
             file.close()
 
             # opponent VS competition 
-            filename = "competition/{}_VS_competition_time_{}_iteration_{}.txt" \
+            filename = "competition/{}_VS_competition_player_time_{}_iteration_{}.txt" \
                     .format(opponent, t, it)
             file = open(filename, 'w+')
 
@@ -47,7 +47,7 @@ def callto(opponent):
             call(['python', 'run_game.py', '2', t, '5', 'n', \
                     opponent, 'competition_player'], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n {} competition_player\t\t--> {} sec'\
+            print('python run_game.py 2 {} 5 n {} competition_player\t--> {} sec'\
                     .format(t, opponent, end-start))
 
             counter += 2

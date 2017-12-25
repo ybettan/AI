@@ -9,26 +9,32 @@ players = [ \
            'simple_player', \
            'better_player', \
            'min_max_player', \
-           'alpha_beta_player' \
+           'alpha_beta_player', \
+           'competition_player' \
           ]
 times = ['2', '10', '50']
+iterations = ['1', '2', '3', '4', '5']
 
 
 
 def create_fianl_reult_and_csv_file():
-    num_of_files_treated = 0
+    num_of_files = 0
     final_result = {player: {t: 0 for t in times} for player in players}
-    experiments = open('experiments.csv', 'w')
+    comp_res = open('comp_res.csv', 'w')
     for p1 in players:
         for p2 in players:
-            if p1 == p2:
+            if p1 == p2 or (p1 != 'competition_player' and p2 != 'competition_player'):
                 continue
+            #if p1 == 'competitioin_player' and p2 == 'competitioin_player':
+            #    continue
             for time in times:
-                for i in range(5):
-                    file_name = 'temp/' + p1 + "_" + p2 + "_time_" + time + \
-                            "_iteration_" + str(i+1) + '.txt'
-                    num_of_files_treated += 1
-                    with open(file_name, 'r') as file:
+                for it in iterations:
+                    #file_name = 'temp/' + p1 + "_" + p2 + "_time_" + time + \
+                    #        "_iteration_" + it + '.txt'
+                    filename = "competition/{}_VS_{}_time_{}_iteration_{}.txt"\
+                            .format(p1, p2, time, it)
+                    num_of_files += 1
+                    with open(filename, 'r') as file:
                         for line in file.readlines():
                             print('line is:{}'.format(line))
                             winner = re.split('\n', line)[0].split(' ')[-1]
@@ -45,17 +51,14 @@ def create_fianl_reult_and_csv_file():
                             final_result[p2][time] += float(p2_score)
                             line_to_print = p1 + ',' + p2 + ',' + time + ',' + \
                                     p1_score + ',' + p2_score + '\n'
-                            experiments.write(line_to_print)
+                            comp_res.write(line_to_print)
 
-    experiments.close()
-    assert(num_of_files_treated == 180)
+    comp_res.close()
+    assert(num_of_files == 120)
     return final_result
 
 
-def create_graph_and_table(final_result):
-    table = open('table.csv', 'w')
-    headers = 't = 2, t = 10, t = 50, player_name\n'
-    table.write(headers)
+def create_graph(final_result):
     plt.figure()
     x = [int(t) for t in times]
     plt.title('Scores as a function of t')
@@ -66,9 +69,7 @@ def create_graph_and_table(final_result):
         for point in y:
             line += str(point) + ','
         line += player + '\n'
-        table.write(line)
         plt.plot(x, y, '.-', label=player)
-    table.close()
     plt.legend()
     plt.show()
 
@@ -76,10 +77,8 @@ def create_graph_and_table(final_result):
 def main():
 
     final_result = create_fianl_reult_and_csv_file()
-    create_graph_and_table(final_result)
+    create_graph(final_result)
 
-    #if os.path.isdir('temp'):
-    #    shutil.rmtree('temp')
 
 
 if __name__ == '__main__':

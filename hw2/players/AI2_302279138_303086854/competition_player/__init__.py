@@ -366,6 +366,6 @@ class Player(abstract.AbstractPlayer):
         return (time.time() - self.clock) >= self.time_for_current_move
 
     def __repr__(self):
-        return '{} {}'.format(abstract.AbstractPlayer.__repr__(self), 'better')
+        return '{} {}'.format(abstract.AbstractPlayer.__repr__(self), 'competition')
 
 # c:\python35\python.exe run_game.py 3 3 3 y simple_player random_player

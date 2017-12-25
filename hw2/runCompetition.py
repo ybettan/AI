@@ -25,7 +25,7 @@ def callto(opponent):
         for it in iterations:
 
             # competition VS opponent
-            filename = "competition/competition_VS_{}_time_{}_iteration_{}.txt" \
+            filename = "competition/competition_player_VS_{}_time_{}_iteration_{}.txt" \
                     .format(opponent, t, it)
             file = open(filename, 'w+')
 
@@ -39,7 +39,7 @@ def callto(opponent):
             file.close()
 
             # opponent VS competition 
-            filename = "competition/{}_VS_competition_time_{}_iteration_{}.txt" \
+            filename = "competition/{}_VS_competition_player_time_{}_iteration_{}.txt" \
                     .format(opponent, t, it)
             file = open(filename, 'w+')
 

@@ -12,63 +12,108 @@ players = [ \
            'simple_player', \
            'better_player', \
            'min_max_player', \
-           'alpha_beta_player' \
+           'alpha_beta_player', \
+           'competition_player' \
           ]
 times = ['2', '10', '50']
 iterations = ['1', '2', '3', '4', '5']
 
 
-def callto(p1, p2):
+def callto(it):
 
     counter = 0
-    for t in times:
-        for it in iterations:
+    for p1 in players:
+        for p2 in players[players.index(p1)+1:]:
+            for t in times:
 
-            # p1 VS p2
-            filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p1, p2, \
-                    t, it)
-            file = open(filename, 'w+')
+                # p1 VS p2
+                filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p1, p2, \
+                        t, it)
+                file = open(filename, 'w+')
 
-            start = time.time()
-            call(['python', 'run_game.py', '2', t, '5', 'n', p1, p2], stdout=file)
-            end = time.time()
-            print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
-                    t, p1, p2, end-start))
+                start = time.time()
+                call(['python', 'run_game.py', '2', t, '5', 'n', p1, p2], stdout=file)
+                end = time.time()
+                print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
+                        t, p1, p2, end-start))
 
-            file.close()
+                file.close()
 
-            # p2 VS p1
-            filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p2, p1, \
-                    t, it)
-            file = open(filename, 'w+')
+                # p2 VS p1
+                filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p2, p1, \
+                        t, it)
+                file = open(filename, 'w+')
 
-            start = time.time()
-            call(['python', 'run_game.py', '2', t, '5', 'n', p2, p1], stdout=file)
-            end = time.time()
-            print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
-                    t, p2, p1, end-start))
+                start = time.time()
+                call(['python', 'run_game.py', '2', t, '5', 'n', p2, p1], stdout=file)
+                end = time.time()
+                print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
+                        t, p2, p1, end-start))
 
-            file.close()
+                file.close()
 
-            counter += 2
+                counter += 2
 
-    assert(counter == 30)
+    assert(counter == 60)
+
+    #counter = 0
+    #for t in times:
+    #    for it in iterations:
+
+    #        # p1 VS p2
+    #        filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p1, p2, \
+    #                t, it)
+    #        file = open(filename, 'w+')
+
+    #        start = time.time()
+    #        call(['python', 'run_game.py', '2', t, '5', 'n', p1, p2], stdout=file)
+    #        end = time.time()
+    #        print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
+    #                t, p1, p2, end-start))
+
+    #        file.close()
+
+    #        # p2 VS p1
+    #        filename = "temp/{}_{}_time_{}_iteration_{}.txt".format(p2, p1, \
+    #                t, it)
+    #        file = open(filename, 'w+')
+
+    #        start = time.time()
+    #        call(['python', 'run_game.py', '2', t, '5', 'n', p2, p1], stdout=file)
+    #        end = time.time()
+    #        print('python run_game.py 2 {} 5 n {} {}\t\t--> {} sec'.format( \
+    #                t, p2, p1, end-start))
+
+    #        file.close()
+
+    #        counter += 2
+
+    #assert(counter == 30)
 
 
 def run_threads():
     threads = []
 
-    for p1 in players:
-        for p2 in players[players.index(p1)+1:]:
-            if p1 == p2:
-                continue
-            t = threading.Thread(target=callto, args=[p1, p2])
-            threads.append(t)
-            t.start()
+    for it in iterations:
+        t = threading.Thread(target=callto, args=[it])
+        threads.append(t)
+        t.start()
 
-    assert(len(threads) == 6)
+    assert(len(threads) == 5)
     for t in threads:
         t.join()
+
+    #for p1 in players:
+    #    for p2 in players[players.index(p1)+1:]:
+    #        if p1 == p2:
+    #            continue
+    #        t = threading.Thread(target=callto, args=[p1, p2])
+    #        threads.append(t)
+    #        t.start()
+    #
+    #assert(len(threads) == 6)
+    #for t in threads:
+    #    t.join()
 
 
 

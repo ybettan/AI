@@ -9,7 +9,8 @@ players = [ \
            'simple_player', \
            'better_player', \
            'min_max_player', \
-           'alpha_beta_player' \
+           'alpha_beta_player', \
+           'competition_player' \
           ]
 times = ['2', '10', '50']
 
@@ -48,7 +49,7 @@ def create_fianl_reult_and_csv_file():
                             experiments.write(line_to_print)
 
     experiments.close()
-    assert(num_of_files_treated == 180)
+    assert(num_of_files_treated == 300)
     return final_result
 
 

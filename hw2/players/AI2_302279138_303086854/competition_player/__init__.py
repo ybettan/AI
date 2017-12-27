@@ -10,7 +10,8 @@
 import sys
 import re
 import abstract
-from utils import INFINITY, run_with_limited_time, ExceededTimeError
+from utils import INFINITY, run_with_limited_time, ExceededTimeError, \
+        MiniMaxAlgorithm
 from Reversi.consts import EM, OPPONENT_COLOR, BOARD_COLS, BOARD_ROWS, O_PLAYER
 from Reversi.board import GameState
 import time
@@ -67,6 +68,12 @@ class Player(abstract.AbstractPlayer):
             self.book2reality = self.book2reality1
             self.reality2book = self.reality2book1
 
+        self.min_max_algorithm = MiniMaxAlgorithm(self.utility, \
+                self.color, self.no_more_time, None)
+
+        # for performence
+        self.max_steps_left = 62
+
         # create opening book
         opening_book = {}
         f = open("best_70_opens.gam", 'r')
@@ -96,6 +103,8 @@ class Player(abstract.AbstractPlayer):
         self.clock = time.time()
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
+
+        self.max_steps_left -= 2
 
         # discover last move done by opponent
         opponent_move_str_format = ''
@@ -135,17 +144,27 @@ class Player(abstract.AbstractPlayer):
             if oppening_book_res != None:
                 best_move = oppening_book_res
             else:
-                best_move = possible_moves[0]
-                next_state = copy.deepcopy(game_state)
-                next_state.perform_move(best_move[0],best_move[1])
-                # Choosing an arbitrary move
-                # Get the best move according the utility function
-                for move in possible_moves:
-                    new_state = copy.deepcopy(game_state)
-                    new_state.perform_move(move[0],move[1])
-                    if self.utility(new_state) > self.utility(next_state):
-                        next_state = new_state
-                        best_move = move
+                curr_depth = 1
+
+                # there is maximum max_steps_left steps in the game
+                last_move = None
+                while curr_depth < self.max_steps_left:
+                    try:
+                        _, best_move = self.min_max_algorithm.search( \
+                                game_state, curr_depth, True)
+
+                        if last_move != best_move:
+                            game_state_copy = copy.deepcopy(game_state)
+                            game_state_copy.perform_move(best_move[0], best_move[1])
+                            self.last_state = game_state_copy
+
+                        last_move = best_move
+                        curr_depth += 1
+                    except ExceededTimeError:
+                        break
+
+        to_be_append = TO_LETTER[str(best_move[0]+1)] + str(best_move[1]+1)
+        self.moves += self.reality2book(to_be_append)
 
         if self.turns_remaining_in_round == 1:
             self.turns_remaining_in_round = self.k
@@ -153,12 +172,6 @@ class Player(abstract.AbstractPlayer):
         else:
             self.turns_remaining_in_round -= 1
             self.time_remaining_in_round -= (time.time() - self.clock)
-
-        to_be_append = TO_LETTER[str(best_move[0]+1)] + str(best_move[1]+1)
-        self.moves += self.reality2book(to_be_append)
-        game_state_copy = copy.deepcopy(game_state)
-        game_state_copy.perform_move(best_move[0], best_move[1])
-        self.last_state = game_state_copy
 
         return best_move
 

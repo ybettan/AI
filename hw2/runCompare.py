@@ -21,7 +21,7 @@ def callto(thread_num):
 
     counter = 0
     for t in times:
-        for it in range(100):
+        for it in range(10):
 
             # competition VS old_competition
             filename = "compare_competition/{}_VS_{}_time_{}_iteration_{}_t{}.txt" \
@@ -51,7 +51,7 @@ def callto(thread_num):
 
             counter += 2
 
-    assert(counter == 600)
+    assert(counter == 60)
 
 
 def run_threads():

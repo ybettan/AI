@@ -23,7 +23,7 @@ def create_fianl_reult_and_csv_file():
             if p1 == p2:
                 continue
             for time in times:
-                for it in range(100):
+                for it in range(10):
                     for t in range(4):
                         filename = "compare_competition/{}_VS_{}_time_{}_iteration_{}_t{}.txt"\
                                 .format(p1, p2, time, it, t)
@@ -48,7 +48,7 @@ def create_fianl_reult_and_csv_file():
                                 compare_res.write(line_to_print)
 
     compare_res.close()
-    assert(num_of_files == 2400)
+    assert(num_of_files == 240)
     return final_result
 
 

@@ -44,18 +44,18 @@ class Player(abstract.AbstractPlayer):
         self.max_steps_left -= 2
 
         if len(possible_moves) == 1:
-            return possible_moves[0]
+            best_move =  possible_moves[0]
+        else:
+            curr_depth = 1
 
-        curr_depth = 1
-
-        # there is maximum max_steps_left steps in the game
-        while curr_depth < self.max_steps_left:
-            try:
-                _, last_minimax_move = self.min_max_algorithm.search( \
-                        game_state, curr_depth, True)
-                curr_depth += 1
-            except ExceededTimeError:
-                break
+            # there is maximum max_steps_left steps in the game
+            while curr_depth < self.max_steps_left:
+                try:
+                    _, best_move = self.min_max_algorithm.search( \
+                            game_state, curr_depth, True)
+                    curr_depth += 1
+                except ExceededTimeError:
+                    break
 
         if self.turns_remaining_in_round == 1:
             self.turns_remaining_in_round = self.k
@@ -64,7 +64,7 @@ class Player(abstract.AbstractPlayer):
             self.turns_remaining_in_round -= 1
             self.time_remaining_in_round -= (time.time() - self.clock)
 
-        return last_minimax_move
+        return best_move
 
     def utility(self, state):
         if len(state.get_possible_moves()) == 0:

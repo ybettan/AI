@@ -131,13 +131,6 @@ class MiniMaxAlgorithm:
 
                 if self.no_more_time():
                     raise ExceededTimeError
-                #FIXME: remove
-                #c = state_copy.perform_move(move[0], move[1])
-                #if not c:
-                #    print("invalid move at utils/MinMaxAlgorithm.search()")
-                #    sys.exit(1)
-                v, _ = self.search(state_copy, depth-1, not maximizing_player)
-                if v > curr_max:
                     curr_max = v
                     best_move = move
             if self.no_more_time():
@@ -150,13 +143,6 @@ class MiniMaxAlgorithm:
                 state_copy.perform_move(move[0], move[1])
                 if self.no_more_time():
                     raise ExceededTimeError
-                #FIXME:remove
-                #c = state_copy.perform_move(move[0], move[1])
-                #if not c:
-                #    print("invalid move at utils/MinMaxAlgorithm.search()")
-                #    sys.exit(1)
-                v, _ = self.search(state_copy, depth-1, not maximizing_player)
-                curr_min = min(v, curr_min)
             if self.no_more_time():
                 raise ExceededTimeError
             return curr_min, None
@@ -222,18 +208,13 @@ class MiniMaxWithAlphaBetaPruning:
         best_move = None
         if maximizing_player:
             curr_max = -INFINITY
-            
+
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 state_copy.perform_move(move[0], move[1])
 
-                if depth == 0:
-                    return self.utility(state), None
-                #FIXME:remove
-                #c = state_copy.perform_move(move[0], move[1])
-                #if not c:
-                #    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
-                #    sys.exit(1)
+                if self.no_more_time():
+                    raise ExceededTimeError
                 v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
                 if v > curr_max:
@@ -250,14 +231,8 @@ class MiniMaxWithAlphaBetaPruning:
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 state_copy.perform_move(move[0], move[1])
-
-                if depth == 0:
-                    return self.utility(state), None
-                #FIXME:remove
-                #c = state_copy.perform_move(move[0], move[1])
-                #if not c:
-                #    print("invalid move at utils/MinMaxWithAlphaBetaPuring.search()")
-                #    sys.exit(1)
+                if self.no_more_time():
+                    raise ExceededTimeError
                 v, _ = self.search(state_copy, depth-1, alpha, beta, \
                         not maximizing_player)
                 curr_min = min(v, curr_min)

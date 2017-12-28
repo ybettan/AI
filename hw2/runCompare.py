@@ -31,8 +31,8 @@ def callto(thread_num):
             start = time.time()
             call(['python', 'run_game.py', '2', t, '5', 'n', NEW, OLD], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n {} {}\t--> {} sec'\
-                    .format(t, NEW, OLD, end-start))
+            print('python run_game.py 2 {} 5 n {} {} --> {} sec'\
+                    .format(t, NEW, OLD, int(end-start)))
 
             file.close()
 
@@ -44,8 +44,8 @@ def callto(thread_num):
             start = time.time()
             call(['python', 'run_game.py', '2', t, '5', 'n', OLD, NEW], stdout=file)
             end = time.time()
-            print('python run_game.py 2 {} 5 n {} {}\t--> {} sec'\
-                    .format(t, OLD, NEW, end-start))
+            print('python run_game.py 2 {} 5 n {} {} --> {} sec'\
+                    .format(t, OLD, NEW, int(end-start)))
 
             file.close()
 

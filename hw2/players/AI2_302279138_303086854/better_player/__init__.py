@@ -33,11 +33,7 @@ class NonEdgeIndex(Exception):
 
 
 class Player(abstract.AbstractPlayer):
-    '''
-    for now this class is an exact copy of players.simple_player.Player
-    except the utils function (the heuristic)
-    FIXME: remove the comment if i changed anything
-    '''
+
     def __init__(self, setup_time, player_color, time_per_k_turns, k):
         abstract.AbstractPlayer.__init__(self, setup_time, player_color, \
                 time_per_k_turns, k)
@@ -330,27 +326,22 @@ class Player(abstract.AbstractPlayer):
         return (my_moves - op_moves) * MOBILITY_FAC
 
     # FIXME: can i remove? for now it is not used
-    def __is_final_state(self, state):
-        for x in range(BOARD_COLS):
-            for y in range(BOARD_ROWS):
-                if state.board[x][y] == EM:
-                    return False
-        return True
+    #def __is_final_state(self, state):
+    #    for x in range(BOARD_COLS):
+    #        for y in range(BOARD_ROWS):
+    #            if state.board[x][y] == EM:
+    #                return False
+    #    return True
 
     def utility(self, state):
         if len(state.get_possible_moves()) == 0:
             return INFINITY if state.curr_player != self.color else -INFINITY
 
-        # FIXME: can i remove?
-        #if self.__is_final_state(state):
-        #    return self.__end_utility(state)
-            
-
         mobility_fac = 1
         score_fac = 1
         mobility_res = self.__mobility_utility(state) 
         score_res = self.__score_utility(state)
-        #FIXME: give different whigts according to T 
+
         return mobility_res*mobility_fac + score_res*score_fac
 #------------------------------------------------------------------------------
 

@@ -123,7 +123,7 @@ class MiniMaxAlgorithm:
 
         best_move = None
         if maximizing_player:
-            curr_max = -INFINITY
+            curr_max = -INFINITY*2
 
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
@@ -131,18 +131,22 @@ class MiniMaxAlgorithm:
 
                 if self.no_more_time():
                     raise ExceededTimeError
+                v, _ = self.search(state_copy, depth-1, not maximizing_player)
+                if v > curr_max:
                     curr_max = v
                     best_move = move
             if self.no_more_time():
                 raise ExceededTimeError
             return curr_max, best_move
         else:
-            curr_min = INFINITY
+            curr_min = INFINITY*2
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 state_copy.perform_move(move[0], move[1])
                 if self.no_more_time():
                     raise ExceededTimeError
+                v, _ = self.search(state_copy, depth-1, not maximizing_player)
+                curr_min = min(v, curr_min)
             if self.no_more_time():
                 raise ExceededTimeError
             return curr_min, None
@@ -207,7 +211,7 @@ class MiniMaxWithAlphaBetaPruning:
 
         best_move = None
         if maximizing_player:
-            curr_max = -INFINITY
+            curr_max = -INFINITY*2
 
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
@@ -222,12 +226,12 @@ class MiniMaxWithAlphaBetaPruning:
                     best_move = move
                 alpha = max(curr_max, alpha)
                 if curr_max >= beta:
-                    return INFINITY, None
+                    return INFINITY*2, None
             if self.no_more_time():
                 raise ExceededTimeError
             return curr_max, best_move
         else:
-            curr_min = INFINITY
+            curr_min = INFINITY*2
             for move in possible_moves:
                 state_copy = copy.deepcopy(state)
                 state_copy.perform_move(move[0], move[1])
@@ -238,7 +242,7 @@ class MiniMaxWithAlphaBetaPruning:
                 curr_min = min(v, curr_min)
                 beta = min(curr_min, beta)
                 if curr_min <= alpha:
-                    return -INFINITY,None
+                    return -INFINITY*2,None
             if self.no_more_time():
                 raise ExceededTimeError
             return curr_min, None

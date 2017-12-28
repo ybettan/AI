@@ -50,6 +50,19 @@ class Player(abstract.AbstractPlayer):
         self.time_remaining_in_round = self.time_per_k_turns
         self.time_for_current_move = self.time_remaining_in_round / \
                 self.turns_remaining_in_round - 0.05
+
+        # chose get_move function according to time_per_k_turns:
+        # time_per_k_turns < 3 --> get_move_min_max
+        # time_per_k_turns > 3 --> get_move_alpha_beta
+        if time_per_k_turns < 3:
+            self.get_move_chosen = self.get_move_min_max
+            self.min_max_algorithm = MiniMaxAlgorithm(self.utility, \
+                    self.color, self.no_more_time, None)
+        else:
+            self.get_move_chosen = self.get_move_alpha_beta
+            self.alpha_beta_algorithm = MiniMaxWithAlphaBetaPruning(self.utility, \
+                    self.color, self.no_more_time, None)
+
         # keep the game-moves as a string
         self.moves = ''
         self.last_state = GameState()
@@ -63,8 +76,6 @@ class Player(abstract.AbstractPlayer):
             self.book2reality = self.book2reality1
             self.reality2book = self.reality2book1
 
-        self.alpha_beta_algorithm = MiniMaxWithAlphaBetaPruning(self.utility, \
-                self.color, self.no_more_time, None)
 
         # for performence
         self.max_steps_left = 62
@@ -133,6 +144,23 @@ class Player(abstract.AbstractPlayer):
         # this case is handled in run_game.py
         assert(len(possible_moves) != 0)
 
+        best_move =  self.get_move_chosen(game_state, possible_moves)
+
+        to_be_append = TO_LETTER[str(best_move[0]+1)] + str(best_move[1]+1)
+        self.moves += self.reality2book(to_be_append)
+
+        if self.turns_remaining_in_round == 1:
+            self.turns_remaining_in_round = self.k
+            self.time_remaining_in_round = self.time_per_k_turns
+        else:
+            self.turns_remaining_in_round -= 1
+            self.time_remaining_in_round -= (time.time() - self.clock)
+
+        return best_move
+
+
+    def get_move_alpha_beta(self, game_state, possible_moves):
+
         # find the best move
         if len(possible_moves) == 1:
             best_move =  possible_moves[0]
@@ -161,17 +189,41 @@ class Player(abstract.AbstractPlayer):
                     except ExceededTimeError:
                         break
 
-        to_be_append = TO_LETTER[str(best_move[0]+1)] + str(best_move[1]+1)
-        self.moves += self.reality2book(to_be_append)
+        return best_move
 
-        if self.turns_remaining_in_round == 1:
-            self.turns_remaining_in_round = self.k
-            self.time_remaining_in_round = self.time_per_k_turns
+
+    def get_move_min_max(self, game_state, possible_moves):
+
+        # find the best move
+        if len(possible_moves) == 1:
+            best_move =  possible_moves[0]
         else:
-            self.turns_remaining_in_round -= 1
-            self.time_remaining_in_round -= (time.time() - self.clock)
+            # check if next move can be determined from oppening book
+            oppening_book_res = self.opening_move()
+            if oppening_book_res != None:
+                best_move = oppening_book_res
+            else:
+                curr_depth = 1
+
+                # there is maximum max_steps_left steps in the game
+                last_move = None
+                while curr_depth < self.max_steps_left:
+                    try:
+                        _, best_move = self.min_max_algorithm.search( \
+                                game_state, curr_depth, True)
+
+                        if last_move != best_move:
+                            game_state_copy = copy.deepcopy(game_state)
+                            game_state_copy.perform_move(best_move[0], best_move[1])
+                            self.last_state = game_state_copy
+
+                        last_move = best_move
+                        curr_depth += 1
+                    except ExceededTimeError:
+                        break
 
         return best_move
+
 
     def opening_move(self):
 

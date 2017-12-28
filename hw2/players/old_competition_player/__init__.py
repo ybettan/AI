@@ -18,7 +18,7 @@ import copy
 from collections import defaultdict
 import sys
 
-
+# for the opening book
 TO_LETTER = {'1':'a', '2':'b', '3':'c', '4':'d', '5':'e', '6':'f', '7':'g', \
              '8':'h'}
 TO_DIGIT = {'a':'1', 'b':'2', 'c':'3', 'd':'4', 'e':'5', 'f':'6', 'g':'7', \
@@ -63,7 +63,7 @@ class Player(abstract.AbstractPlayer):
             self.book2reality = self.book2reality1
             self.reality2book = self.reality2book1
 
-        self.min_max_algorithm = MiniMaxAlgorithm(self.utility, \
+        self.alpha_beta_algorithm = MiniMaxWithAlphaBetaPruning(self.utility, \
                 self.color, self.no_more_time, None)
 
         # for performence
@@ -148,8 +148,8 @@ class Player(abstract.AbstractPlayer):
                 last_move = None
                 while curr_depth < self.max_steps_left:
                     try:
-                        _, best_move = self.min_max_algorithm.search( \
-                                game_state, curr_depth, True)
+                        _, best_move = self.alpha_beta_algorithm.search( \
+                                game_state, curr_depth, -INFINITY*2, INFINITY*2, True)
 
                         if last_move != best_move:
                             game_state_copy = copy.deepcopy(game_state)
@@ -344,6 +344,7 @@ class Player(abstract.AbstractPlayer):
         score_res = self.__score_utility(state)
 
         return mobility_res*mobility_fac + score_res*score_fac
+
 #------------------------------------------------------------------------------
 
     def selective_deepening_criterion(self, state):

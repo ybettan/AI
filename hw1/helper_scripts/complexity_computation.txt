@@ -1,0 +1,10 @@
+k: 1	 no_gas: 1	 with_gas: 1
+k: 2	 no_gas: 2	 with_gas: 10
+k: 3	 no_gas: 6	 with_gas: 150
+k: 4	 no_gas: 24	 with_gas: 3000
+k: 5	 no_gas: 120	 with_gas: 75000
+k: 6	 no_gas: 720	 with_gas: 2250000
+k: 7	 no_gas: 5040	 with_gas: 78750000
+k: 8	 no_gas: 40320	 with_gas: 3150000000
+k: 9	 no_gas: 362880	 with_gas: 141750000000
+k: 10	 no_gas: 3628800	 with_gas: 7087500000000

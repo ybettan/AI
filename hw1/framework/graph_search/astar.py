@@ -47,7 +47,11 @@ class AStar(BestFirstSearch):
         Notice: You may use `search_node.cost`, `self.heuristic_weight`, and `self.heuristic_function`.
         """
 
-        raise NotImplemented()  # TODO: remove!
+        #raise NotImplemented()  # TODO: remove!
+        g_score = search_node.cost
+        h_score = self.heuristic_function.estimate(search_node)
+        f_score = (1-self.heuristic_weight)*g_score + self.heuristic_weight*h_score
+        return f_score
 
     def _open_successor_node(self, problem: GraphProblem, successor_node: SearchNode):
         """
@@ -67,5 +71,35 @@ class AStar(BestFirstSearch):
                   but still could be improved.
         """
 
-        raise NotImplemented()  # TODO: remove!
+        #raise NotImplemented()  # TODO: remove!
+
+        # check if the *state* is in OPEN
+        if self.open.has_state(successor_node.state):
+            old_node = self.open.get_node_by_state(successor_node.state)
+
+            # the new parent is better
+            if successor_node.expanding_priority < old_node.expanding_priority:
+                # pop the old node from OPEN
+                self.open.extract_node(old_node)
+                # insert the new node to OPEN
+                self.open.push_node(successor_node)
+
+            # the old parent is better - do nothing
+
+        # check if the *state* is in CLOSE
+        elif self.close.get_node_by_state(successor_node.state) != None:
+            old_node = self.close.get_node_by_state(successor_node.state)
+
+            # the new parent is better
+            if successor_node.expanding_priority < old_node.expanding_priority:
+                # pop the old node from CLOSE
+                self.close.remove_node(old_node)
+                # insert the new node to OPEN
+                self.open.push_node(successor_node)
+
+            # the old parent is better - do nothing
+
+        # this is a new node - push it to OPEN
+        else:
+            self.open.push_node(successor_node)
 

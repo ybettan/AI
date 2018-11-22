@@ -1,6 +1,8 @@
 from framework import *
 from deliveries import *
 
+import matplotlib
+matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 import numpy as np
 from typing import List, Union
@@ -34,23 +36,26 @@ def plot_distance_and_expanded_wrt_weight_figure(
     ## https://matplotlib.org/2.0.0/api/_as_gen/matplotlib.axes.Axes.plot.html
     ## You can also search google for additional examples.
     #raise NotImplemented()
-    ax1.plot()
+    ax1.plot(weights, total_distance, 'b')
 
-    ## ax1: Make the y-axis label, ticks and tick labels match the line color.
-    #ax1.set_ylabel('distance traveled', color='b')
-    #ax1.tick_params('y', colors='b')
-    #ax1.set_xlabel('weight')
+    # ax1: Make the y-axis label, ticks and tick labels match the line color.
+    ax1.set_ylabel('distance traveled', color='b')
+    ax1.tick_params('y', colors='b')
+    ax1.set_xlabel('weight')
 
-    ## Create another axis for the #expanded curve.
-    #ax2 = ax1.twinx()
+    # Create another axis for the #expanded curve.
+    ax2 = ax1.twinx()
 
-    ## TODO: Plot the total expanded with ax2. Use `ax2.plot(...)`.
-    ## TODO: ax2: Make the y-axis label, ticks and tick labels match the line color.
-    ## TODO: Make this curve colored red with solid line style.
+    # TODO: Plot the total expanded with ax2. Use `ax2.plot(...)`.
+    # TODO: ax2: Make the y-axis label, ticks and tick labels match the line color.
+    # TODO: Make this curve colored red with solid line style.
     #raise NotImplemented()
+    ax2.plot(weights, total_expanded, 'r')
+    ax2.set_ylabel('states expanded', color='r')
+    ax2.tick_params('y', colors='r')
 
-    #fig.tight_layout()
-    #plt.show()
+    fig.tight_layout()
+    plt.show()
 
 
 def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, problem: GraphProblem):
@@ -74,7 +79,7 @@ def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, proble
         res = was.solve_problem(problem)
         costs.append(res.final_search_node.cost)
         expanded_states.append(res.nr_expanded_states)
-    #plot_distance_and_expanded_wrt_weight_figure(weights, costs, expanded_states)
+    plot_distance_and_expanded_wrt_weight_figure(weights, costs, expanded_states)
 
 
 def map_problem():

@@ -49,7 +49,7 @@ class AStar(BestFirstSearch):
 
         #raise NotImplemented()  # TODO: remove!
         g_score = search_node.cost
-        h_score = self.heuristic_function.estimate(search_node)
+        h_score = self.heuristic_function.estimate(search_node.state)
         f_score = (1-self.heuristic_weight)*g_score + self.heuristic_weight*h_score
         return f_score
 

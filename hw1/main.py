@@ -28,28 +28,29 @@ def plot_distance_and_expanded_wrt_weight_figure(
 
     fig, ax1 = plt.subplots()
 
-    # TODO: Plot the total distances with ax1. Use `ax1.plot(...)`.
-    # TODO: Make this curve colored blue with solid line style.
-    # See documentation here:
-    # https://matplotlib.org/2.0.0/api/_as_gen/matplotlib.axes.Axes.plot.html
-    # You can also search google for additional examples.
-    raise NotImplemented()
+    ## TODO: Plot the total distances with ax1. Use `ax1.plot(...)`.
+    ## TODO: Make this curve colored blue with solid line style.
+    ## See documentation here:
+    ## https://matplotlib.org/2.0.0/api/_as_gen/matplotlib.axes.Axes.plot.html
+    ## You can also search google for additional examples.
+    #raise NotImplemented()
+    ax1.plot()
 
-    # ax1: Make the y-axis label, ticks and tick labels match the line color.
-    ax1.set_ylabel('distance traveled', color='b')
-    ax1.tick_params('y', colors='b')
-    ax1.set_xlabel('weight')
+    ## ax1: Make the y-axis label, ticks and tick labels match the line color.
+    #ax1.set_ylabel('distance traveled', color='b')
+    #ax1.tick_params('y', colors='b')
+    #ax1.set_xlabel('weight')
 
-    # Create another axis for the #expanded curve.
-    ax2 = ax1.twinx()
+    ## Create another axis for the #expanded curve.
+    #ax2 = ax1.twinx()
 
-    # TODO: Plot the total expanded with ax2. Use `ax2.plot(...)`.
-    # TODO: ax2: Make the y-axis label, ticks and tick labels match the line color.
-    # TODO: Make this curve colored red with solid line style.
-    raise NotImplemented()
+    ## TODO: Plot the total expanded with ax2. Use `ax2.plot(...)`.
+    ## TODO: ax2: Make the y-axis label, ticks and tick labels match the line color.
+    ## TODO: Make this curve colored red with solid line style.
+    #raise NotImplemented()
 
-    fig.tight_layout()
-    plt.show()
+    #fig.tight_layout()
+    #plt.show()
 
 
 def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, problem: GraphProblem):
@@ -64,7 +65,16 @@ def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, proble
     #    the #expanded.
     # Call the function `plot_distance_and_expanded_by_weight_figure()`
     #  with that data.
-    raise NotImplemented()  # TODO: remove!
+    #raise NotImplemented()  # TODO: remove!
+    weights = np.linspace(start=0.5, stop=1, num=20)
+    costs = []
+    expanded_states = []
+    for w in weights:
+        was = AStar(heuristic_type, w)
+        res = was.solve_problem(problem)
+        costs.append(res.final_search_node.cost)
+        expanded_states.append(res.nr_expanded_states)
+    #plot_distance_and_expanded_wrt_weight_figure(weights, costs, expanded_states)
 
 
 def map_problem():
@@ -90,7 +100,10 @@ def map_problem():
     # Ex.11
     # TODO: create an instance of `AStar` with the `AirDistHeuristic`,
     #       solve the same `map_prob` with it and print the results (as before).
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
+    was = AStar(AirDistHeuristic)
+    res = was.solve_problem(map_prob)
+    print(res)
 
     # Ex.12
     # TODO:
@@ -101,7 +114,8 @@ def map_problem():
     #    (upper in this file).
     # 3. Call here the function `run_astar_for_weights_in_range()`
     #    with `AirDistHeuristic` and `map_prob`.
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
+    run_astar_for_weights_in_range(AirDistHeuristic, map_prob)
 
 
 # --------------------------------------------------------------------

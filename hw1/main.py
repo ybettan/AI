@@ -146,12 +146,16 @@ def relaxed_deliveries_problem():
     # Ex.17
     # TODO: create an instance of `AStar` with the `MSTAirDistHeuristic`,
     #       solve the `big_deliveries_prob` with it and print the results (as before).
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
+    was = AStar(MSTAirDistHeuristic)
+    res = was.solve_problem(big_deliveries_prob)
+    print(res)
 
     # Ex.18
     # TODO: Call here the function `run_astar_for_weights_in_range()`
     #       with `MSTAirDistHeuristic` and `big_deliveries_prob`.
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
+    run_astar_for_weights_in_range(MSTAirDistHeuristic, big_deliveries_prob)
 
     # Ex.24
     # TODO:

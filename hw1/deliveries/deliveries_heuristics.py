@@ -21,8 +21,19 @@ class MaxAirDistHeuristic(HeuristicFunction):
         assert isinstance(self.problem, RelaxedDeliveriesProblem)
         assert isinstance(state, RelaxedDeliveriesState)
 
-        raise NotImplemented()  # TODO: remove!
+        # if the state is a target then the estimatino is 0 by definition
+        if self.problem.is_goal(state):
+            return 0
 
+        distances = []
+        # Iterate over the *unvisited* drop points, dp : Junction
+        for dp in self.problem.drop_points:
+            if dp in state.dropped_so_far:
+                continue
+            operator_cost = dp.calc_air_distance_from(state.current_location)
+            distances.append(operator_cost)
+        assert(len(distances) > 0)
+        return max(distances)
 
 class MSTAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'MSTAirDist'

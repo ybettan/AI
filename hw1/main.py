@@ -1,6 +1,7 @@
 from framework import *
 from deliveries import *
 
+# this import is OK according to staff
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -177,7 +178,52 @@ def relaxed_deliveries_problem():
     #    (x-axis). Of course that the costs of A*, and deterministic
     #    greedy are not dependent with the iteration number, so
     #    these two should be represented by horizontal lines.
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
+        
+    K = 100
+
+    #1
+    # run the GreedyStochastic algorithm K time an store the results
+    gs_costs = []
+    for i in range(K):
+        gs = GreedyStochastic(MSTAirDistHeuristic)
+        gs_res = gs.solve_problem(big_deliveries_prob)
+        gs_costs.append(gs_res.final_search_node.cost)
+
+    #2
+    # for each N iteration of the GreedyStochastic store the best result.
+    # this is simulating K other iteration of the GreedyStochastic algorithm
+    an_costs = [gs_costs[0]]
+    for i in range(1, K):
+        an_costs.append(min(an_costs[i-1], gs_costs[i]))
+
+    #3
+    # use the result we already calculated for Astar
+    as_costs = [res.final_search_node.cost] * K
+
+    #4
+    # compute the deterministyc greedy algorithm
+    gd = AStar(MSTAirDistHeuristic, heuristic_weight=1)
+    gd_costs = [gd.solve_problem(big_deliveries_prob).final_search_node.cost] * K
+
+    #5
+    # create the X axis
+    X = list(range(1, K+1))
+
+    plt.plot(X, gs_costs, label="GreedyStochastic")
+    plt.plot(X, an_costs, label="AnytimeGreedyStochastic")
+    plt.plot(X, as_costs, label="Astar")
+    plt.plot(X, gd_costs, label="GreadyDeterministic")
+    
+    plt.xlabel("Iteration")
+    plt.ylabel("Cost")
+    plt.title("Cost(iteration#)")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+    
 
 
 def strict_deliveries_problem():

@@ -122,7 +122,7 @@ class RelaxedDeliveriesProblem(GraphProblem):
             successor_state = RelaxedDeliveriesState(gs, new_dropped_so_far, new_fuel)
 
             # Yield the successor state and the cost of the operator we used to get this successor.
-            yield successor_state, operator_cost
+            yield successor_state, operator_cost #FIXME: cost instead of operator cost
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """

@@ -13,10 +13,6 @@ class StrictDeliveriesState(RelaxedDeliveriesState):
      deliveries problem.
     This state is basically similar to the state of the relaxed
      problem. Hence, this class inherits from `RelaxedDeliveriesState`.
-
-    TODO:
-        If you believe you need to modify the state for the strict
-         problem in some sense, please go ahead and do so.
     """
     pass
 
@@ -37,6 +33,11 @@ class StrictDeliveriesProblem(RelaxedDeliveriesProblem):
         self.roads = roads
         self.use_cache = use_cache
         self._init_cache()
+        self.start_point = problem_input.start_point
+        self.drop_points = frozenset(problem_input.drop_points)
+        self.gas_stations = frozenset(problem_input.gas_stations)
+        self.gas_tank_capacity = problem_input.gas_tank_capacity
+        self.possible_stop_points = self.drop_points | self.gas_stations
 
     def _init_cache(self):
         self._cache = {}
@@ -68,7 +69,43 @@ class StrictDeliveriesProblem(RelaxedDeliveriesProblem):
         """
         assert isinstance(state_to_expand, StrictDeliveriesState)
 
-        raise NotImplemented()  # TODO: remove!
+        # Iterate over the unvisited drop points, dp : Junction
+        for dp in self.drop_points:
+            src_p = state_to_expand.current_location.index
+            operator_cost = self._get_from_cache((src_p, dp.index))
+            if not operator_cost:
+                map_prob = MapProblem(self.roads, src_p, dp.index)
+                operator_cost = self.inner_problem_solver.solve_problem(map_prob).final_search_node.cost
+                self._insert_to_cache((src_p, dp.index), operator_cost)
+            was_dropped_already = dp in state_to_expand.dropped_so_far
+            # create only new and reachable successors
+            if was_dropped_already or operator_cost > state_to_expand.fuel:
+                continue
+            new_dropped_so_far = set(state_to_expand.dropped_so_far)
+            new_dropped_so_far.add(dp)
+            new_fuel = state_to_expand.fuel - operator_cost
+            successor_state = StrictDeliveriesState(dp, frozenset(new_dropped_so_far), new_fuel)
+
+            # Yield the successor state and the cost of the operator we used to get this successor.
+            yield successor_state, operator_cost
+
+        # Iterate over the gas stations
+        for gs in self.gas_stations:
+            src_p = state_to_expand.current_location.index
+            operator_cost = self._get_from_cache((src_p, gs.index))
+            if not operator_cost:
+                map_prob = MapProblem(self.roads, src_p, gs.index)
+                operator_cost = self.inner_problem_solver.solve_problem(map_prob).final_search_node.cost
+                self._insert_to_cache((src_p, gs.index), operator_cost)
+            # create only reachable successors
+            if operator_cost > state_to_expand.fuel:
+                continue
+            new_dropped_so_far = frozenset(state_to_expand.dropped_so_far)
+            new_fuel = self.gas_tank_capacity
+            successor_state = StrictDeliveriesState(gs, new_dropped_so_far, new_fuel)
+
+            # Yield the successor state and the cost of the operator we used to get this successor.
+            yield successor_state, operator_cost  # FIXME: cost instead of operator cost
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -76,5 +113,4 @@ class StrictDeliveriesProblem(RelaxedDeliveriesProblem):
         TODO: implement this method!
         """
         assert isinstance(state, StrictDeliveriesState)
-
-        raise NotImplemented()  # TODO: remove!
+        return state.dropped_so_far == self.drop_points

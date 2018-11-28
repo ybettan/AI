@@ -35,6 +35,7 @@ class MaxAirDistHeuristic(HeuristicFunction):
         assert(len(distances) > 0)
         return max(distances)
 
+
 class MSTAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'MSTAirDist'
 
@@ -83,8 +84,19 @@ class RelaxedDeliveriesHeuristic(HeuristicFunction):
         TODO: implement this method!
         """
 
+        # if the state is a target then the estimation is 0 by definition
+        if self.problem.is_goal(state):
+            return 0
+
         assert isinstance(self.problem, StrictDeliveriesProblem)
         assert isinstance(state, StrictDeliveriesState)
 
-        raise NotImplemented()  # TODO: remove!
+        drops_left = frozenset(self.problem.drop_points - state.dropped_so_far)
+        new_problem = DeliveriesProblemInput("heuristic", state.current_location, drops_left, self.problem.gas_stations, self.problem.gas_tank_capacity, state.fuel)
+        small_relaxed_deliveries_prob = RelaxedDeliveriesProblem(new_problem)
 
+        was = AStar(MSTAirDistHeuristic)
+        res = was.solve_problem(small_relaxed_deliveries_prob)
+        if not res.final_search_node:
+            return np.inf
+        return res.final_search_node.cost

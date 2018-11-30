@@ -84,12 +84,12 @@ class RelaxedDeliveriesHeuristic(HeuristicFunction):
         TODO: implement this method!
         """
 
+        assert isinstance(self.problem, StrictDeliveriesProblem)
+        assert isinstance(state, StrictDeliveriesState)
+
         # if the state is a target then the estimation is 0 by definition
         if self.problem.is_goal(state):
             return 0
-
-        assert isinstance(self.problem, StrictDeliveriesProblem)
-        assert isinstance(state, StrictDeliveriesState)
 
         drops_left = frozenset(self.problem.drop_points - state.dropped_so_far)
         new_problem = DeliveriesProblemInput("heuristic", state.current_location, drops_left, self.problem.gas_stations, self.problem.gas_tank_capacity, state.fuel)

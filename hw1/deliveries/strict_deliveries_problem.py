@@ -33,11 +33,6 @@ class StrictDeliveriesProblem(RelaxedDeliveriesProblem):
         self.roads = roads
         self.use_cache = use_cache
         self._init_cache()
-        self.start_point = problem_input.start_point
-        self.drop_points = frozenset(problem_input.drop_points)
-        self.gas_stations = frozenset(problem_input.gas_stations)
-        self.gas_tank_capacity = problem_input.gas_tank_capacity
-        self.possible_stop_points = self.drop_points | self.gas_stations
 
     def _init_cache(self):
         self._cache = {}

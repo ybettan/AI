@@ -5,19 +5,24 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 
 X = np.array([400, 450, 900, 390, 550])
-X.sort()
 a = min(X)
 N = 5
+
+# create the temperature scale
 T = np.linspace(start=0.01, stop=5, num=100)
 
-def pr(x_i):
-    n_smallest = X[:N]
-    return ((x_i/a)**(-1/T)) / sum([(s/a)**(-1/T) for s in n_smallest])
+# normelize the temperature vector
+normelized_X = X/a
 
+# allocate the result matrix
+P = np.zeros((len(T), len(X)))
 
-# P[i] is the curve pr(x_i) as function of T
-P = np.array([pr(x_i) for x_i in X])
-P = P.transpose()
+# initialize the correct values
+for i in range(len(T)):
+    mone = normelized_X**(-1 / T[i])
+    mehane = sum(mone)
+    for j in range(len(X)):
+        P[i][j] = mone[j]/mehane
 
 print(P)
 

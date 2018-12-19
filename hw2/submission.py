@@ -12,7 +12,6 @@ class ReflexAgent(Agent):
     self.lastPositions = []
     self.dc = None
 
-
   def getAction(self, gameState):
     """
     getAction chooses among the best options according to the evaluation function.
@@ -52,6 +51,13 @@ def scoreEvaluationFunction(gameState):
 
 ######################################################################################
 # b: implementing a better heuristic function
+
+def isTerminalState(gameState):
+
+    #  getLegalPacmanActions() return [] if the state isWin or isLose so we
+    #  don't need to check it separetly.
+    return len(gameState.getLegalPacmanActions()) == 0
+
 def betterEvaluationFunction(gameState):
   """
 
@@ -73,6 +79,10 @@ def betterEvaluationFunction(gameState):
 
 
 def betterEvaluationFunction_bestButSlower(gameState):
+
+    # return the utility function values on terminal states
+    if isTerminalState(gameState):
+        return gameState.getScore()
 
     pacman_position = gameState.getPacmanPosition()
 
@@ -122,6 +132,10 @@ def betterEvaluationFunction_bestButSlower(gameState):
 
 #FIXME: remove when done if not used
 def betterEvaluationFunction_notBestButFaster(gameState):
+
+    # return the utility function values on terminal states
+    if isTerminalState(gameState):
+        return gameState.getScore()
 
     pacman_position = gameState.getPacmanPosition()
 
@@ -193,48 +207,117 @@ class MultiAgentSearchAgent(Agent):
 # c: implementing minimax
 
 class MinimaxAgent(MultiAgentSearchAgent):
-  """
-    Your minimax agent
-  """
-
-  def getAction(self, gameState):
     """
-      Returns the minimax action from the current gameState using self.depth
-      and self.evaluationFunction. Terminal states can be found by one of the following:
-      pacman won, pacman lost or there are no legal moves.
-
-      Here are some method calls that might be useful when implementing minimax.
-
-      gameState.getLegalActions(agentIndex):
-        Returns a list of legal actions for an agent
-        agentIndex=0 means Pacman, ghosts are >= 1
-
-      Directions.STOP:
-        The stop direction
-
-      gameState.generateSuccessor(agentIndex, action):
-        Returns the successor game state after an agent takes an action
-
-      gameState.getNumAgents():
-        Returns the total number of agents in the game
-
-      gameState.getScore():
-        Returns the score corresponding to the current state of the game
-
-      gameState.isWin():
-        Returns True if it's a winning state
-
-      gameState.isLose():
-        Returns True if it's a losing state
-
-      self.depth:
-        The depth to which search should continue
-
+      Your minimax agent
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    #FIXME: move to MultiAgentSearchAgetn class ?
+    def isTerminalState(self, gameState):
+
+        #  getLegalPacmanActions() return [] if the state isWin or isLose so we
+        #  don't need to check it separetly.
+        return len(gameState.getLegalPacmanActions()) == 0
+
+    def rbMinimax(self, gameState, agent, depth):
+
+        # for terminal state or depth reached we will return the huristic estimation
+        if self.isTerminalState(gameState) or depth == 0:
+            return self.evaluationFunction(gameState)
+
+        # get all successor states
+        legal_action = gameState.getLegalActions(agent)
+        childrens = [gameState.generateSuccessor(agent, action) for action in legal_action]
+
+        # find the next agent modulo the number of agents
+        next_agent = (agent + 1) % gameState.getNumAgents()
+
+        # update the depth if we finished a full round of turns
+        # pacmang, ..., last ghost
+        if next_agent == 0:
+            next_depth = depth - 1
+        else:
+            next_depth = depth
+
+        # pacman turn
+        if agent == 0:
+            cur_max = -np.inf
+            for c in childrens:
+                v = self.rbMinimax(c, next_agent, next_depth)
+                cur_max = max(cur_max, v)
+            return cur_max
+
+        # ghost turn
+        else:
+            cur_min = np.inf
+            for c in childrens:
+                v = self.rbMinimax(c, next_agent, next_depth)
+                cur_min = min(cur_min, v)
+            return cur_min
+
+
+    def getAction(self, gameState):
+        """
+          Returns the minimax action from the current gameState using self.depth
+          and self.evaluationFunction. Terminal states can be found by one of the following:
+          pacman won, pacman lost or there are no legal moves.
+
+          Here are some method calls that might be useful when implementing minimax.
+
+          gameState.getLegalActions(agentIndex):
+            Returns a list of legal actions for an agent
+            agentIndex=0 means Pacman, ghosts are >= 1
+
+          Directions.STOP:
+            The stop direction
+
+          gameState.generateSuccessor(agentIndex, action):
+            Returns the successor game state after an agent takes an action
+
+          gameState.getNumAgents():
+            Returns the total number of agents in the game
+
+          gameState.getScore():
+            Returns the score corresponding to the current state of the game
+
+          gameState.isWin():
+            Returns True if it's a winning state
+
+          gameState.isLose():
+            Returns True if it's a losing state
+
+          self.depth:
+            The depth to which search should continue
+
+        """
+
+        # BEGIN_YOUR_CODE
+
+        # Collect legal moves and successor states
+        legalMoves = gameState.getLegalActions()
+
+        # find the next agent modulo the number of agents
+        next_agent = 1 % gameState.getNumAgents()
+
+        # update the depth if we finished a full round of turns
+        # pacmang, ..., last ghost
+        if next_agent == 0:
+            next_depth = self.depth - 1
+        else:
+            next_depth = self.depth
+        # according to staff we can assume that the game won't be launched with
+        # 0 ghosts and with depth=0 therefor next_depth >= 0
+
+        # Choose one of the best actions
+        scores = [self.rbMinimax(gameState.generatePacmanSuccessor(action), \
+                next_agent, next_depth) for action in legalMoves]
+        bestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        return legalMoves[chosenIndex]
+
+      # END_YOUR_CODE
+
 
 ######################################################################################
 # d: implementing alpha-beta

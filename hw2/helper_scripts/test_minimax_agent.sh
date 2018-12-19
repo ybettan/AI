@@ -1,27 +1,34 @@
 #!/bin/bash
 
-N=15
+N=$2
+D=$4
+
+#FIXME: update it to not run minimax agent with k=0 and depth=0 - waiting for staff response
 
 #==============================================================================
 #                               mediumClassic
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l mediumClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l mediumClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_mediumClassic=$((end-start))
 sum_mediumClassic=0
 
-for r in $res_0; do
-    sum_mediumClassic=$(($sum_mediumClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_mediumClassic=$(($sum_mediumClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_mediumClassic=$(($sum_mediumClassic+$r))
 done
@@ -48,21 +55,25 @@ echo mediumClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l capsuleClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l capsuleClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_capsuleClassic=$((end-start))
 sum_capsuleClassic=0
 
-for r in $res_0; do
-    sum_capsuleClassic=$(($sum_capsuleClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_capsuleClassic=$(($sum_capsuleClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_capsuleClassic=$(($sum_capsuleClassic+$r))
 done
@@ -89,21 +100,25 @@ echo capsuleClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l contestClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l contestClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l contestClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l contestClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l contestClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l contestClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l contestClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_contestClassic=$((end-start))
 sum_contestClassic=0
 
-for r in $res_0; do
-    sum_contestClassic=$(($sum_contestClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_contestClassic=$(($sum_contestClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_contestClassic=$(($sum_contestClassic+$r))
 done
@@ -130,21 +145,25 @@ echo contestClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l minimaxClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l minimaxClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_minimaxClassic=$((end-start))
 sum_minimaxClassic=0
 
-for r in $res_0; do
-    sum_minimaxClassic=$(($sum_minimaxClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_minimaxClassic=$(($sum_minimaxClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_minimaxClassic=$(($sum_minimaxClassic+$r))
 done
@@ -171,21 +190,25 @@ echo minimaxClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l openClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l openClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l openClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l openClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l openClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l openClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l openClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_openClassic=$((end-start))
 sum_openClassic=0
 
-for r in $res_0; do
-    sum_openClassic=$(($sum_openClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_openClassic=$(($sum_openClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_openClassic=$(($sum_openClassic+$r))
 done
@@ -212,21 +235,25 @@ echo openClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l originalClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l originalClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l originalClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l originalClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l originalClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l originalClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l originalClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_originalClassic=$((end-start))
 sum_originalClassic=0
 
-for r in $res_0; do
-    sum_originalClassic=$(($sum_originalClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_originalClassic=$(($sum_originalClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_originalClassic=$(($sum_originalClassic+$r))
 done
@@ -253,21 +280,25 @@ echo originalClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l smallClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l smallClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l smallClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l smallClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l smallClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l smallClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l smallClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_smallClassic=$((end-start))
 sum_smallClassic=0
 
-for r in $res_0; do
-    sum_smallClassic=$(($sum_smallClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_smallClassic=$(($sum_smallClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_smallClassic=$(($sum_smallClassic+$r))
 done
@@ -294,21 +325,25 @@ echo smallClassic DONE
 #==============================================================================
 
 start=$SECONDS
-res_0=`python pacman.py -p ReflexAgent -q -l testClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
-res_1=`python pacman.py -p ReflexAgent -q -l testClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p ReflexAgent -q -l testClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p ReflexAgent -q -l testClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p ReflexAgent -q -l testClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p ReflexAgent -q -l testClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p ReflexAgent -q -l testClassic -n $N | cut -d":" -f2 | head -$N`
+if (($D != 0)); then
+    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+fi
+res_1=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_testClassic=$((end-start))
 sum_testClassic=0
 
-for r in $res_0; do
-    sum_testClassic=$(($sum_testClassic+$r))
-done
+if (($D != 0)); then
+    for r in $res_0; do
+        sum_testClassic=$(($sum_testClassic+$r))
+    done
+fi
 for r in $res_1; do
     sum_testClassic=$(($sum_testClassic+$r))
 done
@@ -424,8 +459,11 @@ sum=$(($sum+$sum_testClassic))
 #sum=$(($sum+$sum_trappedClassic))
 #sum=$(($sum+$sum_trickyClassic))
 echo -n "score: "
-echo $(( $sum/$((56*$N)) ))
-#echo $(( $sum/$((7*$N)) ))
+if (($D != 0)); then
+    echo $(( $sum/$((56*$N)) ))
+else
+    echo $(( $sum/$((48*$N)) ))
+fi
 
 duration=0
 duration=$(($duration+$duration_mediumClassic))
@@ -439,6 +477,6 @@ duration=$(($duration+$duration_testClassic))
 #duration=$(($duration+$duration_trappedClassic))
 #duration=$(($duration+$duration_trickyClassic))
 echo -n "duration: "
-echo $duration
+echo $(($duration))
 
 

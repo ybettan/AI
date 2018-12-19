@@ -1,5 +1,6 @@
 import random, util
 from game import Agent
+import numpy as np
 
 #     ********* Reflex agent- sections a and b *********
 class ReflexAgent(Agent):
@@ -37,7 +38,7 @@ class ReflexAgent(Agent):
     and returns a number, where higher numbers are better.
     """
     successorGameState = currentGameState.generatePacmanSuccessor(action)
-    return scoreEvaluationFunction(successorGameState)
+    return betterEvaluationFunction(successorGameState)
 
 
 #     ********* Evaluation functions *********
@@ -67,6 +68,104 @@ def betterEvaluationFunction(gameState):
   gameState.getScore():
   The GameState class is defined in pacman.py and you might want to look into that for other helper methods.
   """
+  return betterEvaluationFunction_bestButSlower(gameState)
+  #return betterEvaluationFunction_notBestButFaster(gameState)
+
+
+def betterEvaluationFunction_bestButSlower(gameState):
+
+    pacman_position = gameState.getPacmanPosition()
+
+    # compute the manhatan distance to the closest piece of food
+    min_food_dist = np.inf
+    for food_position in gameState.getFood().asList():
+        dist = util.manhattanDistance(food_position, pacman_position)
+        min_food_dist = min(min_food_dist, dist)
+
+    # compute the manhatan distance to the closest capsule
+    min_capsule_dist = np.inf
+    for capsule_position in gameState.getCapsules():
+        dist = util.manhattanDistance(capsule_position, pacman_position)
+        min_capsule_dist = min(min_capsule_dist, dist)
+
+    # compute the manhatan distance to the closest ghost
+    min_ghost_dist = np.inf
+    index = 0
+    for ghost_position in gameState.getGhostPositions():
+        dist = util.manhattanDistance(ghost_position, pacman_position)
+        if (dist < min_ghost_dist):
+            min_ghost_dist = dist
+            min_ghost_id = index
+        index += 1
+    # prevent dividing by 0
+    if (min_ghost_dist == 0):
+        min_ghost_dist = 1
+
+    # check if we wan't to get closer to the closes ghost
+    num_ghosts = len(gameState.getGhostStates())
+    if num_ghosts > 0:
+        is_closes_ghost_vulnerable = gameState.getGhostState(index).scaredTimer > 0
+        if is_closes_ghost_vulnerable:
+            ghost_factor = 30
+        else:
+            ghost_factor = -30
+    else:
+        ghost_factor = 0
+
+    # Combination of the above calculated metrics.
+    return gameState.getScore() + \
+            (1/float(min_food_dist)) + \
+            (1/float(min_capsule_dist)) + \
+            ghost_factor * (1/float(min_ghost_dist)) + \
+            np.random.choice([0, 1], p=[0.85, 0.15])
+
+
+#FIXME: remove when done if not used
+def betterEvaluationFunction_notBestButFaster(gameState):
+
+    pacman_position = gameState.getPacmanPosition()
+
+    # compute the manhatan distance to the closest piece of food
+    min_food_dist = np.inf
+    for food_position in gameState.getFood().asList():
+        dist = util.manhattanDistance(food_position, pacman_position)
+        min_food_dist = min(min_food_dist, dist)
+
+    # compute the manhatan distance to the closest capsule
+    min_capsule_dist = np.inf
+    for capsule_position in gameState.getCapsules():
+        dist = util.manhattanDistance(capsule_position, pacman_position)
+        min_capsule_dist = min(min_capsule_dist, dist)
+
+    # compute the manhatan distance to each ghost
+    ghost_all_dists = []
+    for ghost_position in gameState.getGhostPositions():
+        dist = util.manhattanDistance(ghost_position, pacman_position)
+        # prevent dividing by 0
+        if (dist == 0):
+            dist = 1
+        ghost_all_dists.append(dist)
+
+    # check if we wan't to get closer to each ghost
+    ghost_all_vulnerabilities = []
+    for ghost_state in gameState.getGhostStates():
+        if ghost_state.scaredTimer > 0:
+            ghost_all_vulnerabilities.append(20)
+        else:
+            ghost_all_vulnerabilities.append(-20)
+
+    # compute the total bonus for ghosts closnes
+    ghosts_score = 0
+    for i in range(len(ghost_all_dists)):
+        ghosts_score += 1/float(ghost_all_dists[i]*ghost_all_vulnerabilities[i])
+
+    # Combination of the above calculated metrics.
+    return gameState.getScore() + \
+            (1/float(min_food_dist)) + \
+            (1/float(min_capsule_dist)) + \
+            ghosts_score + \
+            np.random.choice([0, 1], p=[0.85, 0.15])
+
 
 #     ********* MultiAgent Search Agents- sections c,d,e,f*********
 

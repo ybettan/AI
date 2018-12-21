@@ -3,8 +3,6 @@
 N=$2
 D=$4
 
-#FIXME: update it to not run minimax agent with k=0 and depth=0 - waiting for staff response
-
 #==============================================================================
 #                               mediumClassic
 #==============================================================================

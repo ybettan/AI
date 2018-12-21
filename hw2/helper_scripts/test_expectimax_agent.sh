@@ -11,12 +11,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l mediumClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l mediumClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_mediumClassic=$((end-start))
@@ -56,12 +56,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l capsuleClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l capsuleClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_capsuleClassic=$((end-start))
@@ -101,12 +101,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l contestClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l contestClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_contestClassic=$((end-start))
@@ -146,12 +146,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l minimaxClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l minimaxClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_minimaxClassic=$((end-start))
@@ -191,12 +191,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l openClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l openClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_openClassic=$((end-start))
@@ -236,12 +236,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l originalClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l originalClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_originalClassic=$((end-start))
@@ -281,12 +281,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l smallClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l smallClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_smallClassic=$((end-start))
@@ -326,12 +326,12 @@ start=$SECONDS
 if (($D != 0)); then
     res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
-res_1=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
-res_2=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
-res_3=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
-res_4=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
-res_5=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
-res_d=`python pacman.py -p AlphaBetaAgent -q -a depth=$D -l testClassic -n $N | cut -d":" -f2 | head -$N`
+res_1=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
+res_2=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
+res_3=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -k 3 -n $N | cut -d":" -f2 | head -$N`
+res_4=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -k 4 -n $N | cut -d":" -f2 | head -$N`
+res_5=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -k 5 -n $N | cut -d":" -f2 | head -$N`
+res_d=`python pacman.py -p RandomExpectimaxAgent -q -a depth=$D -l testClassic -n $N | cut -d":" -f2 | head -$N`
 end=$SECONDS
 
 duration_testClassic=$((end-start))

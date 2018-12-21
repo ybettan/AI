@@ -1,6 +1,8 @@
 import random, util
 from game import Agent
 import numpy as np
+# this is OK according to staff
+from ghostAgents import GhostAgent, RandomGhost, DirectionalGhost
 
 #     ********* Reflex agent- sections a and b *********
 class ReflexAgent(Agent):
@@ -205,12 +207,6 @@ class MultiAgentSearchAgent(Agent):
     self.evaluationFunction = util.lookup(evalFn, globals())
     self.depth = int(depth)
 
-  def isTerminalState(self, gameState):
-
-      #  getLegalPacmanActions() return [] if the state isWin or isLose so we
-      #  don't need to check it separetly.
-      return len(gameState.getLegalPacmanActions()) == 0
-
 ######################################################################################
 # c: implementing minimax
 
@@ -223,7 +219,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     def rbMinimax(self, gameState, agent, depth):
 
         # for terminal state or depth reached we will return the huristic estimation
-        if self.isTerminalState(gameState) or depth == 0:
+        if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
 
         # get all successor states
@@ -333,7 +329,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     def rbAlphaBeta(self, gameState, agent, depth, alpha, beta):
 
         # for terminal state or depth reached we will return the huristic estimation
-        if self.isTerminalState(gameState) or depth == 0:
+        if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
 
         # get all successor states
@@ -416,97 +412,132 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 ######################################################################################
 # e: implementing random expectimax
 
+def rbExpectimax(gameState, agent, depth, multiAgent, ghostType):
+
+    assert(ghostType == 'random_ghost' or ghostType == 'directional_ghost')
+
+    # for terminal state or depth reached we will return the huristic estimation
+    if isTerminalState(gameState) or depth == 0:
+        return multiAgent.evaluationFunction(gameState)
+
+    # find the next agent modulo the number of agents
+    next_agent = (agent + 1) % gameState.getNumAgents()
+
+    # update the depth if we finished a full round of turns
+    # pacmang, ..., last ghost
+    if next_agent == 0:
+        next_depth = depth - 1
+    else:
+        next_depth = depth
+
+    # create a ghost agent to access its distribution
+    if ghostType == 'random_ghost':
+        ghostAgent = RandomGhost(agent)
+    else:
+        ghostAgent = DirectionalGhost(agent)
+
+    # pacman - maximinzing
+    if agent == 0:
+        cur_max = -np.inf
+        legal_action = gameState.getLegalActions(agent)
+        for action in legal_action:
+            c = gameState.generateSuccessor(agent, action)
+            v = rbExpectimax(c, next_agent, next_depth, multiAgent, ghostType)
+            cur_max = max(cur_max, v)
+        return cur_max
+
+    # ghost - tohelet
+    else:
+        tohelet = 0
+        dist = ghostAgent.getDistribution(gameState)
+        for action, prob in dist.items():
+            c = gameState.generateSuccessor(agent, action)
+            v = rbExpectimax(c, next_agent, next_depth, multiAgent, ghostType)
+            tohelet += v * prob
+        return tohelet
+
+
 class RandomExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent
     """
 
-    def rbExpectimax(self, gameState, agent, depth):
+    def getAction(self, gameState):
+        """
+          Returns the expectimax action using self.depth and self.evaluationFunction
+          All ghosts should be modeled as choosing uniformly at random from their legal moves.
+        """
 
-        # for terminal state or depth reached we will return the huristic estimation
-        if self.isTerminalState(gameState) or depth == 0:
-            return self.evaluationFunction(gameState)
+        # BEGIN_YOUR_CODE
 
-        # get all successor states
-        legal_action = gameState.getLegalActions(agent)
-        childrens = [gameState.generateSuccessor(agent, action) for action in legal_action]
+        # Collect legal moves and successor states
+        legalMoves = gameState.getLegalActions()
 
         # find the next agent modulo the number of agents
-        next_agent = (agent + 1) % gameState.getNumAgents()
+        next_agent = 1 % gameState.getNumAgents()
 
         # update the depth if we finished a full round of turns
         # pacmang, ..., last ghost
         if next_agent == 0:
-            next_depth = depth - 1
+            next_depth = self.depth - 1
         else:
-            next_depth = depth
+            next_depth = self.depth
+        # according to staff we can assume that the game won't be launched with
+        # 0 ghosts and with depth=0 therefor next_depth >= 0
 
-        # pacman turn
-        if agent == 0:
-            cur_max = -np.inf
-            for c in childrens:
-                v = self.rbExpectimax(c, next_agent, next_depth)
-                cur_max = max(cur_max, v)
-            return cur_max
+        # Choose one of the best actions
+        scores = [rbExpectimax(gameState.generatePacmanSuccessor(action), \
+                next_agent, next_depth, self, 'random_ghost') for action in legalMoves]
+        bestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
-        # ghost turn - probabilstic
-        else:
-            scores_sum = 0
-            for c in childrens:
-                scores_sum += self.rbExpectimax(c, next_agent, next_depth)
-            return scores_sum/float(len(legal_action))
+        return legalMoves[chosenIndex]
 
-    def getAction(self, gameState):
-      """
-        Returns the expectimax action using self.depth and self.evaluationFunction
-        All ghosts should be modeled as choosing uniformly at random from their legal moves.
-      """
-
-      # BEGIN_YOUR_CODE
-
-      # Collect legal moves and successor states
-      legalMoves = gameState.getLegalActions()
-
-      # find the next agent modulo the number of agents
-      next_agent = 1 % gameState.getNumAgents()
-
-      # update the depth if we finished a full round of turns
-      # pacmang, ..., last ghost
-      if next_agent == 0:
-          next_depth = self.depth - 1
-      else:
-          next_depth = self.depth
-      # according to staff we can assume that the game won't be launched with
-      # 0 ghosts and with depth=0 therefor next_depth >= 0
-
-      # Choose one of the best actions
-      scores = [self.rbExpectimax(gameState.generatePacmanSuccessor(action), \
-              next_agent, next_depth) for action in legalMoves]
-      bestScore = max(scores)
-      bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-      chosenIndex = random.choice(bestIndices) # Pick randomly among the best
-
-      return legalMoves[chosenIndex]
-
-      # END_YOUR_CODE
+        # END_YOUR_CODE
 
 ######################################################################################
 # f: implementing directional expectimax
 
 class DirectionalExpectimaxAgent(MultiAgentSearchAgent):
-  """
-    Your expectimax agent
-  """
-
-  def getAction(self, gameState):
     """
-      Returns the expectimax action using self.depth and self.evaluationFunction
-      All ghosts should be modeled as using the DirectionalGhost distribution to choose from their legal moves.
+      Your expectimax agent
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    def getAction(self, gameState):
+        """
+          Returns the expectimax action using self.depth and self.evaluationFunction
+          All ghosts should be modeled as using the DirectionalGhost distribution
+          to choose from their legal moves.
+        """
+
+        # BEGIN_YOUR_CODE
+
+        # Collect legal moves and successor states
+        legalMoves = gameState.getLegalActions()
+
+        # find the next agent modulo the number of agents
+        next_agent = 1 % gameState.getNumAgents()
+
+        # update the depth if we finished a full round of turns
+        # pacmang, ..., last ghost
+        if next_agent == 0:
+            next_depth = self.depth - 1
+        else:
+            next_depth = self.depth
+        # according to staff we can assume that the game won't be launched with
+        # 0 ghosts and with depth=0 therefor next_depth >= 0
+
+        # Choose one of the best actions
+        scores = [rbExpectimax(gameState.generatePacmanSuccessor(action), \
+                next_agent, next_depth, self, 'directional_ghost') for action in legalMoves]
+        bestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        return legalMoves[chosenIndex]
+
+        # END_YOUR_CODE
 
 
 ######################################################################################

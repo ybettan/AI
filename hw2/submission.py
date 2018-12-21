@@ -122,6 +122,8 @@ def betterEvaluationFunction_bestButSlower(gameState):
     else:
         ghost_factor = 0
 
+    # FIXME: remove the randomness? I think we want the heuristic to be
+    # deterimistic and let the search algorithm to do the randomness
     # Combination of the above calculated metrics.
     return gameState.getScore() + \
             (1/float(min_food_dist)) + \
@@ -203,20 +205,20 @@ class MultiAgentSearchAgent(Agent):
     self.evaluationFunction = util.lookup(evalFn, globals())
     self.depth = int(depth)
 
+  def isTerminalState(self, gameState):
+
+      #  getLegalPacmanActions() return [] if the state isWin or isLose so we
+      #  don't need to check it separetly.
+      return len(gameState.getLegalPacmanActions()) == 0
+
 ######################################################################################
 # c: implementing minimax
 
+#FIXME: use multiproccessing if i have time for competition
 class MinimaxAgent(MultiAgentSearchAgent):
     """
       Your minimax agent
     """
-
-    #FIXME: move to MultiAgentSearchAgetn class ?
-    def isTerminalState(self, gameState):
-
-        #  getLegalPacmanActions() return [] if the state isWin or isLose so we
-        #  don't need to check it separetly.
-        return len(gameState.getLegalPacmanActions()) == 0
 
     def rbMinimax(self, gameState, agent, depth):
 
@@ -322,19 +324,94 @@ class MinimaxAgent(MultiAgentSearchAgent):
 ######################################################################################
 # d: implementing alpha-beta
 
+#FIXME: use multiproccessing if i have time for competition
 class AlphaBetaAgent(MultiAgentSearchAgent):
-  """
-    Your minimax agent with alpha-beta pruning
-  """
-
-  def getAction(self, gameState):
     """
-      Returns the minimax action using self.depth and self.evaluationFunction
+      Your minimax agent with alpha-beta pruning
     """
 
-    # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    def rbAlphaBeta(self, gameState, agent, depth, alpha, beta):
+
+        # for terminal state or depth reached we will return the huristic estimation
+        if self.isTerminalState(gameState) or depth == 0:
+            return self.evaluationFunction(gameState)
+
+        # get all successor states
+        legal_action = gameState.getLegalActions(agent)
+        #FIXME: sort children according to heuristic value for the competition
+        childrens = [gameState.generateSuccessor(agent, action) for action in legal_action]
+
+        # find the next agent modulo the number of agents
+        next_agent = (agent + 1) % gameState.getNumAgents()
+
+        # update the depth if we finished a full round of turns
+        # pacmang, ..., last ghost
+        if next_agent == 0:
+            next_depth = depth - 1
+        else:
+            next_depth = depth
+
+        # pacman turn
+        if agent == 0:
+            cur_max = -np.inf
+            for c in childrens:
+                v = self.rbAlphaBeta(c, next_agent, next_depth, alpha, beta)
+                cur_max = max(cur_max, v)
+                alpha = max(alpha, cur_max)
+                if cur_max >= beta:
+                    return np.inf
+            return cur_max
+
+        # ghost turn
+        else:
+            cur_min = np.inf
+            for c in childrens:
+                v = self.rbAlphaBeta(c, next_agent, next_depth, alpha, beta)
+                cur_min = min(cur_min, v)
+                beta = min(beta, cur_min)
+                if cur_min <= alpha:
+                    return -np.inf
+            return cur_min
+
+    def getAction(self, gameState):
+        """
+          Returns the minimax action using self.depth and self.evaluationFunction
+        """
+
+        # BEGIN_YOUR_CODE
+
+        # Collect legal moves and successor states
+        legalMoves = gameState.getLegalActions()
+
+        # find the next agent modulo the number of agents
+        next_agent = 1 % gameState.getNumAgents()
+
+        # update the depth if we finished a full round of turns
+        # pacmang, ..., last ghost
+        if next_agent == 0:
+            next_depth = self.depth - 1
+        else:
+            next_depth = self.depth
+        # according to staff we can assume that the game won't be launched with
+        # 0 ghosts and with depth=0 therefor next_depth >= 0
+
+        alpha = -np.inf
+
+        #FIXME: sort children according to heuristic value for the competition
+        # Choose one of the best actions
+        scores = []
+        for action in legalMoves:
+            c = gameState.generatePacmanSuccessor(action)
+            v = self.rbAlphaBeta(c, next_agent, next_depth, alpha, np.inf)
+            scores.append(v)
+            alpha = max(alpha, v)
+        bestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        return legalMoves[chosenIndex]
+
+        # END_YOUR_CODE
 
 ######################################################################################
 # e: implementing random expectimax

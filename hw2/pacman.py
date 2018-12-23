@@ -643,6 +643,8 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
     print('Scores:       ', ', '.join([str(score) for score in scores]))
     print('Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate))
     print('Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins]))
+    #FIXME: remove
+    print('Average move time:', pacman.time_total_actions/float(pacman.num_actions))
 
   return games
 

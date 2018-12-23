@@ -1,6 +1,7 @@
 import random, util
 from game import Agent
 import numpy as np
+import time
 # this is OK according to staff
 from ghostAgents import GhostAgent, RandomGhost, DirectionalGhost
 
@@ -13,6 +14,8 @@ class ReflexAgent(Agent):
   def __init__(self):
     self.lastPositions = []
     self.dc = None
+    self.time_total_actions = 0
+    self.num_actions = 0
 
   def getAction(self, gameState):
     """
@@ -21,6 +24,9 @@ class ReflexAgent(Agent):
     getAction takes a GameState and returns some Directions.X for some X in the set {North, South, West, East, Stop}
     ------------------------------------------------------------------------------
     """
+
+    start = time.time()
+
     # Collect legal moves and successor states
     legalMoves = gameState.getLegalActions()
 
@@ -30,6 +36,11 @@ class ReflexAgent(Agent):
     bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
     chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
+    end = time.time()
+
+    # update meta data
+    self.time_total_actions += (end-start)
+    self.num_actions += 1
 
     return legalMoves[chosenIndex]
 
@@ -39,6 +50,8 @@ class ReflexAgent(Agent):
     and returns a number, where higher numbers are better.
     """
     successorGameState = currentGameState.generatePacmanSuccessor(action)
+    # FIXME: make sure it is on betterEvaluationFunciton
+    #return scoreEvaluationFunction(successorGameState)
     return betterEvaluationFunction(successorGameState)
 
 
@@ -206,6 +219,8 @@ class MultiAgentSearchAgent(Agent):
     self.index = 0 # Pacman is always agent index 0
     self.evaluationFunction = util.lookup(evalFn, globals())
     self.depth = int(depth)
+    self.time_total_actions = 0
+    self.num_actions = 0
 
 ######################################################################################
 # c: implementing minimax
@@ -290,6 +305,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         # BEGIN_YOUR_CODE
 
+        start = time.time()
+
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
 
@@ -312,6 +329,12 @@ class MinimaxAgent(MultiAgentSearchAgent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
+        end = time.time()
+
+        # update meta data
+        self.time_total_actions += (end-start)
+        self.num_actions += 1
+
         return legalMoves[chosenIndex]
 
       # END_YOUR_CODE
@@ -332,6 +355,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
 
+        #FIXME: improvment - if there is only one possible acction return it,
+        # don't need to genereate successor or to compute minmax value
         # get all successor states
         legal_action = gameState.getLegalActions(agent)
         #FIXME: sort children according to heuristic value for the competition
@@ -376,6 +401,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         # BEGIN_YOUR_CODE
 
+        start = time.time()
+
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
 
@@ -404,6 +431,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        end = time.time()
+
+        # update meta data
+        self.time_total_actions += (end-start)
+        self.num_actions += 1
 
         return legalMoves[chosenIndex]
 
@@ -470,6 +503,8 @@ class RandomExpectimaxAgent(MultiAgentSearchAgent):
 
         # BEGIN_YOUR_CODE
 
+        start = time.time()
+
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
 
@@ -492,6 +527,12 @@ class RandomExpectimaxAgent(MultiAgentSearchAgent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
+        end = time.time()
+
+        # update meta data
+        self.time_total_actions += (end-start)
+        self.num_actions += 1
+
         return legalMoves[chosenIndex]
 
         # END_YOUR_CODE
@@ -512,6 +553,8 @@ class DirectionalExpectimaxAgent(MultiAgentSearchAgent):
         """
 
         # BEGIN_YOUR_CODE
+
+        start = time.time()
 
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
@@ -534,6 +577,12 @@ class DirectionalExpectimaxAgent(MultiAgentSearchAgent):
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        end = time.time()
+
+        # update meta data
+        self.time_total_actions += (end-start)
+        self.num_actions += 1
 
         return legalMoves[chosenIndex]
 

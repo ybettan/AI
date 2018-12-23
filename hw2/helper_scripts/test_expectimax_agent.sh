@@ -10,7 +10,7 @@ AGENT=$6
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l mediumClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l mediumClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l mediumClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l mediumClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -55,7 +55,7 @@ echo mediumClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l capsuleClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l capsuleClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l capsuleClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l capsuleClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -100,7 +100,7 @@ echo capsuleClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l contestClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l contestClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l contestClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l contestClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -145,7 +145,7 @@ echo contestClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l minimaxClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l minimaxClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l minimaxClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l minimaxClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -190,7 +190,7 @@ echo minimaxClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l openClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l openClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l openClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l openClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -235,7 +235,7 @@ echo openClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l originalClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l originalClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l originalClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l originalClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -280,7 +280,7 @@ echo originalClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l smallClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l smallClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l smallClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l smallClassic -k 2 -n $N | cut -d":" -f2 | head -$N`
@@ -325,7 +325,7 @@ echo smallClassic DONE
 
 start=$SECONDS
 if (($D != 0)); then
-    res_0=`python pacman.py -p MinimaxAgent -q -a depth=$D -l testClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
+    res_0=`python pacman.py -p $AGENT -q -a depth=$D -l testClassic -k 0 -n $N | cut -d":" -f2 | head -$N`
 fi
 res_1=`python pacman.py -p $AGENT -q -a depth=$D -l testClassic -k 1 -n $N | cut -d":" -f2 | head -$N`
 res_2=`python pacman.py -p $AGENT -q -a depth=$D -l testClassic -k 2 -n $N | cut -d":" -f2 | head -$N`

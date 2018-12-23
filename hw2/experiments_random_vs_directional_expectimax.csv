@@ -1,0 +1,4 @@
+RandomExpectimaxAgent,RandomGhost,2139.2,0.6945473630566242
+RandomExpectimaxAgent,DirectionalGhost,1311.8,0.7490055000747986
+DirectionalExpectimaxAgent,RandomGhost,1803.4,0.6219373358693698
+DirectionalExpectimaxAgent,DirectionalGhost,1935.8,0.8313097872617596

@@ -137,9 +137,6 @@ def betterEvaluationFunction_bestButSlower(gameState):
     else:
         ghost_factor = 0
 
-    # FIXME: remove the randomness? I think we want the heuristic to be
-    # deterimistic and let the search algorithm to do the randomness
-    # Combination of the above calculated metrics.
     return gameState.getScore() + \
             (1/float(min_food_dist)) + \
             (1/float(min_capsule_dist)) + \
@@ -236,6 +233,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         # for terminal state or depth reached we will return the huristic estimation
         if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
+
+        #FIXME: improvment - if there is only one possible acction return it,
+        # don't need to genereate successor or to compute minmax value
 
         # get all successor states
         legal_action = gameState.getLegalActions(agent)
@@ -357,6 +357,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         #FIXME: improvment - if there is only one possible acction return it,
         # don't need to genereate successor or to compute minmax value
+
         # get all successor states
         legal_action = gameState.getLegalActions(agent)
         #FIXME: sort children according to heuristic value for the competition
@@ -452,6 +453,9 @@ def rbExpectimax(gameState, agent, depth, multiAgent, ghostType):
     # for terminal state or depth reached we will return the huristic estimation
     if isTerminalState(gameState) or depth == 0:
         return multiAgent.evaluationFunction(gameState)
+
+    #FIXME: improvment - if there is only one possible acction return it,
+    # don't need to genereate successor or to compute minmax value
 
     # find the next agent modulo the number of agents
     next_agent = (agent + 1) % gameState.getNumAgents()
@@ -597,6 +601,10 @@ class CompetitionAgent(MultiAgentSearchAgent):
     Your competition agent
   """
 
+  def __init__(self, evalFn = 'betterEvaluationFunction', depth = '4'):
+    super(CompetitionAgent, self).__init__(evalFn, depth)
+    self.agent = None
+
   def getAction(self, gameState):
     """
       Returns the action using self.depth and self.evaluationFunction
@@ -604,7 +612,24 @@ class CompetitionAgent(MultiAgentSearchAgent):
     """
 
     # BEGIN_YOUR_CODE
-    raise Exception("Not implemented yet")
+
+    start = time.time()
+
+    #FIXME: find the best agent and use it
+    #FIXME: make sure that if there is only 1 successor the other agents return
+    #       it directly
+    #FIXME: make sure that alpha beta is sorting successors according to heuristic
+    #       before pruning
+    self.agent = AlphaBetaAgent()
+
+    end = time.time()
+
+    # update meta data
+    self.time_total_actions += (end-start)
+    self.num_actions += 1
+
+    return self.agent.getAction(gameState)
+
     # END_YOUR_CODE
 
 

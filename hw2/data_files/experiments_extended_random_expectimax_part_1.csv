@@ -1,0 +1,10 @@
+RandomExpectimaxAgent,4,RandomGhost,capsuleClassic,864.0,0.02756560571265943,2
+RandomExpectimaxAgent,4,RandomGhost,contestClassic,1833.0,0.09793925589057291,16
+RandomExpectimaxAgent,4,RandomGhost,mediumClassic,1805.0,0.15270788084785894,41
+RandomExpectimaxAgent,4,RandomGhost,minimaxClassic,516.0,0.028011739253997803,0
+RandomExpectimaxAgent,4,RandomGhost,openClassic,1411.0,3.062335891211593,457
+RandomExpectimaxAgent,4,RandomGhost,originalClassic,1746.0,0.08108028472882312,71
+RandomExpectimaxAgent,4,RandomGhost,smallClassic,1219.0,0.18415099304991883,42
+RandomExpectimaxAgent,4,RandomGhost,testClassic,558.0,0.33697308193553577,8
+RandomExpectimaxAgent,4,RandomGhost,trappedClassic,532.0,0.0009340047836303711,0
+RandomExpectimaxAgent,4,RandomGhost,trickyClassic,2536.0,0.9200663331307863,281

@@ -1,0 +1,10 @@
+DirectionalExpectimaxAgent,4,DirectionalGhost,capsuleClassic,-441.0,0.07648507031527432,1
+DirectionalExpectimaxAgent,4,DirectionalGhost,contestClassic,1242.0,0.21291821753537213,24
+DirectionalExpectimaxAgent,4,DirectionalGhost,mediumClassic,899.0,0.25406638287609407,41
+DirectionalExpectimaxAgent,4,DirectionalGhost,minimaxClassic,507.0,0.015444223697368916,1
+DirectionalExpectimaxAgent,4,DirectionalGhost,openClassic,1216.0,3.4007071405649185,490
+DirectionalExpectimaxAgent,4,DirectionalGhost,originalClassic,1362.0,0.07052811273594492,28
+DirectionalExpectimaxAgent,4,DirectionalGhost,smallClassic,271.0,0.174836053123957,15
+DirectionalExpectimaxAgent,4,DirectionalGhost,testClassic,556.0,0.3062775234381358,7
+DirectionalExpectimaxAgent,4,DirectionalGhost,trappedClassic,-502.0,0.0020200014114379883,0
+DirectionalExpectimaxAgent,4,DirectionalGhost,trickyClassic,2529.0,0.8382264977482737,262

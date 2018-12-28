@@ -36,7 +36,6 @@ while read line; do
 done < experiments_random_vs_directional_expectimax_part_4.csv
 
 
-#FIXME: uncomment
 ## remove all temporary files
 #rm experiments_reflex_better.csv
 #rm experiments_minimax.csv

@@ -21,19 +21,6 @@ avg_turn_time_score_minimax = [0, 0, 0, 0, 0, 0]
 avg_turn_time_score_alpha_beta = [0, 0, 0, 0, 0, 0]
 avg_turn_time_score_random_expectimax = [0, 0, 0, 0, 0, 0]
 
-# Score(layout)
-score_for_layouts_feflex = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-score_for_layouts_better = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-score_for_layouts_minimax = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-score_for_layouts_alpha_beta = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-score_for_layouts_random_expectimax = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-# TurnTime(layout)
-turn_time_for_layouts_feflex = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-turn_time_for_layouts_better = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-turn_time_for_layouts_minimax = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-turn_time_for_layouts_alpha_beta = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-turn_time_for_layouts_random_expectimax = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 # read input from file
@@ -53,198 +40,44 @@ with open("experiments.csv", 'r') as f:
         if agent == 'ReflexAgent':
             total_avg_score_reflex[depth] += avg_score
             avg_turn_time_score_reflex[depth] += avg_turn_time / NUM_LAYOUTS
-            if layout == 'minimaxClassic':
-                score_for_layouts_feflex[0] += avg_score / 1
-                turn_time_for_layouts_feflex[0] += avg_turn_time / 1
-            elif layout == 'trappedClassic':
-                score_for_layouts_feflex[1] += avg_score / 1
-                turn_time_for_layouts_feflex[1] += avg_turn_time / 1
-            elif layout == 'capsuleClassic':
-                score_for_layouts_feflex[2] += avg_score / 1
-                turn_time_for_layouts_feflex[2] += avg_turn_time / 1
-            elif layout == 'contestClassic':
-                score_for_layouts_feflex[3] += avg_score / 1
-                turn_time_for_layouts_feflex[3] += avg_turn_time / 1
-            elif layout == 'mediumClassic':
-                score_for_layouts_feflex[4] += avg_score / 1
-                turn_time_for_layouts_feflex[4] += avg_turn_time / 1
-            elif layout == 'openClassic':
-                score_for_layouts_feflex[5] += avg_score / 1
-                turn_time_for_layouts_feflex[5] += avg_turn_time / 1
-            elif layout == 'originalClassic':
-                score_for_layouts_feflex[6] += avg_score / 1
-                turn_time_for_layouts_feflex[6] += avg_turn_time / 1
-            elif layout == 'smallClassic':
-                score_for_layouts_feflex[7] += avg_score / 1
-                turn_time_for_layouts_feflex[7] += avg_turn_time / 1
-            elif layout == 'testClassic':
-                score_for_layouts_feflex[8] += avg_score / 1
-                turn_time_for_layouts_feflex[8] += avg_turn_time / 1
-            elif layout == 'trickyClassic':
-                score_for_layouts_feflex[9] += avg_score / 1
-                turn_time_for_layouts_feflex[9] += avg_turn_time / 1
-            else:
-                assert 1 == 2
 
         # better
         if agent == 'BetterAgent':
             total_avg_score_better[depth] += avg_score
             avg_turn_time_score_better[depth] += avg_turn_time / NUM_LAYOUTS
-            if layout == 'minimaxClassic':
-                score_for_layouts_better[0] += avg_score / 1
-                turn_time_for_layouts_better[0] += avg_turn_time / 1
-            elif layout == 'trappedClassic':
-                score_for_layouts_better[1] += avg_score / 1
-                turn_time_for_layouts_better[1] += avg_turn_time / 1
-            elif layout == 'capsuleClassic':
-                score_for_layouts_better[2] += avg_score / 1
-                turn_time_for_layouts_better[2] += avg_turn_time / 1
-            elif layout == 'contestClassic':
-                score_for_layouts_better[3] += avg_score / 1
-                turn_time_for_layouts_better[3] += avg_turn_time / 1
-            elif layout == 'mediumClassic':
-                score_for_layouts_better[4] += avg_score / 1
-                turn_time_for_layouts_better[4] += avg_turn_time / 1
-            elif layout == 'openClassic':
-                score_for_layouts_better[5] += avg_score / 1
-                turn_time_for_layouts_better[5] += avg_turn_time / 1
-            elif layout == 'originalClassic':
-                score_for_layouts_better[6] += avg_score / 1
-                turn_time_for_layouts_better[6] += avg_turn_time / 1
-            elif layout == 'smallClassic':
-                score_for_layouts_better[7] += avg_score / 1
-                turn_time_for_layouts_better[7] += avg_turn_time / 1
-            elif layout == 'testClassic':
-                score_for_layouts_better[8] += avg_score / 1
-                turn_time_for_layouts_better[8] += avg_turn_time / 1
-            elif layout == 'trickyClassic':
-                score_for_layouts_better[9] += avg_score / 1
-                turn_time_for_layouts_better[9] += avg_turn_time / 1
-            else:
-                assert 1 == 2
 
         # minimax
         if agent == 'MinMaxAgent':
             total_avg_score_minimax[depth] += avg_score
             avg_turn_time_score_minimax[depth] += avg_turn_time / NUM_LAYOUTS
             if layout == 'minimaxClassic':
-                score_for_layouts_minimax[0] += avg_score / 3
-                turn_time_for_layouts_minimax[0] += avg_turn_time / 3
                 if depth == 4:
                     avg_score_minimaxClassic_depth_4_minimax = avg_score
             elif layout == 'trappedClassic':
-                score_for_layouts_minimax[1] += avg_score / 3
-                turn_time_for_layouts_minimax[1] += avg_turn_time / 3
                 if depth == 4:
                     avg_score_trappedClassic_depth_4_minimax = avg_score
-            elif layout == 'capsuleClassic':
-                score_for_layouts_minimax[2] += avg_score / 3
-                turn_time_for_layouts_minimax[2] += avg_turn_time / 3
-            elif layout == 'contestClassic':
-                score_for_layouts_minimax[3] += avg_score / 3
-                turn_time_for_layouts_minimax[3] += avg_turn_time / 3
-            elif layout == 'mediumClassic':
-                score_for_layouts_minimax[4] += avg_score / 3
-                turn_time_for_layouts_minimax[4] += avg_turn_time / 3
-            elif layout == 'openClassic':
-                score_for_layouts_minimax[5] += avg_score / 3
-                turn_time_for_layouts_minimax[5] += avg_turn_time / 3
-            elif layout == 'originalClassic':
-                score_for_layouts_minimax[6] += avg_score / 3
-                turn_time_for_layouts_minimax[6] += avg_turn_time / 3
-            elif layout == 'smallClassic':
-                score_for_layouts_minimax[7] += avg_score / 3
-                turn_time_for_layouts_minimax[7] += avg_turn_time / 3
-            elif layout == 'testClassic':
-                score_for_layouts_minimax[8] += avg_score / 3
-                turn_time_for_layouts_minimax[8] += avg_turn_time / 3
-            elif layout == 'trickyClassic':
-                score_for_layouts_minimax[9] += avg_score / 3
-                turn_time_for_layouts_minimax[9] += avg_turn_time / 3
-            else:
-                assert 1 == 2
 
         # alpha_beta
         if agent == 'AlphaBetaAgent':
             total_avg_score_alpha_beta[depth] += avg_score
             avg_turn_time_score_alpha_beta[depth] += avg_turn_time / NUM_LAYOUTS
             if layout == 'minimaxClassic':
-                score_for_layouts_alpha_beta[0] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[0] += avg_turn_time / 3
                 if depth == 4:
                     avg_score_minimaxClassic_depth_4_alpha_beta = avg_score
             elif layout == 'trappedClassic':
-                score_for_layouts_alpha_beta[1] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[1] += avg_turn_time / 3
                 if depth == 4:
                     avg_score_trappedClassic_depth_4_alpha_beta = avg_score
-            elif layout == 'capsuleClassic':
-                score_for_layouts_alpha_beta[2] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[2] += avg_turn_time / 3
-            elif layout == 'contestClassic':
-                score_for_layouts_alpha_beta[3] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[3] += avg_turn_time / 3
-            elif layout == 'mediumClassic':
-                score_for_layouts_alpha_beta[4] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[4] += avg_turn_time / 3
-            elif layout == 'openClassic':
-                score_for_layouts_alpha_beta[5] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[5] += avg_turn_time / 3
-            elif layout == 'originalClassic':
-                score_for_layouts_alpha_beta[6] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[6] += avg_turn_time / 3
-            elif layout == 'smallClassic':
-                score_for_layouts_alpha_beta[7] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[7] += avg_turn_time / 3
-            elif layout == 'testClassic':
-                score_for_layouts_alpha_beta[8] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[8] += avg_turn_time / 3
-            elif layout == 'trickyClassic':
-                score_for_layouts_alpha_beta[9] += avg_score / 3
-                turn_time_for_layouts_alpha_beta[9] += avg_turn_time / 3
-            else:
-                assert 1 == 2
 
         # random_expectimax
         if agent == 'RandomExpectimaxAgent':
             total_avg_score_random_expectimax[depth] += avg_score
             avg_turn_time_score_random_expectimax[depth] += avg_turn_time / NUM_LAYOUTS
             if layout == 'minimaxClassic':
-                score_for_layouts_random_expectimax[0] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[0] = avg_turn_time / 3
                 if depth == 4:
                     avg_score_minimaxClassic_depth_4_random_expectimax = avg_score
             elif layout == 'trappedClassic':
-                score_for_layouts_random_expectimax[1] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[1] = avg_turn_time / 3
                 if depth == 4:
                     avg_score_trappedClassic_depth_4_random_expectimax = avg_score
-            elif layout == 'capsuleClassic':
-                score_for_layouts_random_expectimax[2] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[2] = avg_turn_time / 3
-            elif layout == 'contestClassic':
-                score_for_layouts_random_expectimax[3] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[3] = avg_turn_time / 3
-            elif layout == 'mediumClassic':
-                score_for_layouts_random_expectimax[4] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[4] = avg_turn_time / 3
-            elif layout == 'openClassic':
-                score_for_layouts_random_expectimax[5] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[5] = avg_turn_time / 3
-            elif layout == 'originalClassic':
-                score_for_layouts_random_expectimax[6] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[6] = avg_turn_time / 3
-            elif layout == 'smallClassic':
-                score_for_layouts_random_expectimax[7] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[7] = avg_turn_time / 3
-            elif layout == 'testClassic':
-                score_for_layouts_random_expectimax[8] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[8] = avg_turn_time / 3
-            elif layout == 'trickyClassic':
-                score_for_layouts_random_expectimax[9] = avg_score / 3
-                turn_time_for_layouts_random_expectimax[9] = avg_turn_time / 3
-            else:
-                assert 1 == 2
 
 
 
@@ -343,65 +176,3 @@ t.add_row(['AlphaBetaAgent', avg_score_trappedClassic_depth_4_alpha_beta])
 t.add_row(['RandomExpectimaxAgent', avg_score_trappedClassic_depth_4_random_expectimax])
 print (t)
 
-#==============================================================================
-#               Agents preformence on all layouts
-#==============================================================================
-
-
-
-LAYOUTS = ['capsule', \
-        'contest', \
-        'medium', \
-        'minimax', \
-        'open', \
-        'original', \
-        'small', \
-        'test', \
-        'trapped', \
-        'tricky']
-
-#------------------------------------------------------------------------------
-#                               Score(layout)
-#------------------------------------------------------------------------------
-
-plt.plot(LAYOUTS, score_for_layouts_feflex, label='ReflexAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, score_for_layouts_better, label='BetterAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, score_for_layouts_minimax, label='MinMaxAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, score_for_layouts_alpha_beta, label='AlphaBetaAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, score_for_layouts_random_expectimax, label='RandomExpectimaxAgent', \
-        linestyle="-", marker="o")
-#
-plt.xlabel("Layout")
-plt.ylabel("Avg Score")
-plt.title("AvgScore(Layout)")
-plt.legend()
-plt.grid()
-plt.show()
-
-
-
-#------------------------------------------------------------------------------
-#                               TurnTime(layout)
-#------------------------------------------------------------------------------
-
-plt.plot(LAYOUTS, turn_time_for_layouts_feflex, label='ReflexAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, turn_time_for_layouts_better, label='BetterAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, turn_time_for_layouts_minimax, label='MinMaxAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, turn_time_for_layouts_alpha_beta, label='AlphaBetaAgent', \
-        linestyle="-", marker="o")
-plt.plot(LAYOUTS, turn_time_for_layouts_random_expectimax, label='RandomExpectimaxAgent', \
-        linestyle="-", marker="o")
-#
-plt.xlabel("Layout")
-plt.ylabel("Avg Turn Time [sec]")
-plt.title("AvgTurnTime(Layout)")
-plt.legend()
-plt.grid()
-plt.show()

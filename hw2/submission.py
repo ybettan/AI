@@ -90,7 +90,6 @@ def betterEvaluationFunction(gameState):
   The GameState class is defined in pacman.py and you might want to look into that for other helper methods.
   """
   return betterEvaluationFunction_bestButSlower(gameState)
-  #return betterEvaluationFunction_notBestButFaster(gameState)
 
 
 def betterEvaluationFunction_bestButSlower(gameState):
@@ -144,55 +143,6 @@ def betterEvaluationFunction_bestButSlower(gameState):
             np.random.choice([0, 1], p=[0.85, 0.15])
 
 
-#FIXME: remove when done if not used
-def betterEvaluationFunction_notBestButFaster(gameState):
-
-    # return the utility function values on terminal states
-    if isTerminalState(gameState):
-        return gameState.getScore()
-
-    pacman_position = gameState.getPacmanPosition()
-
-    # compute the manhatan distance to the closest piece of food
-    min_food_dist = np.inf
-    for food_position in gameState.getFood().asList():
-        dist = util.manhattanDistance(food_position, pacman_position)
-        min_food_dist = min(min_food_dist, dist)
-
-    # compute the manhatan distance to the closest capsule
-    min_capsule_dist = np.inf
-    for capsule_position in gameState.getCapsules():
-        dist = util.manhattanDistance(capsule_position, pacman_position)
-        min_capsule_dist = min(min_capsule_dist, dist)
-
-    # compute the manhatan distance to each ghost
-    ghost_all_dists = []
-    for ghost_position in gameState.getGhostPositions():
-        dist = util.manhattanDistance(ghost_position, pacman_position)
-        # prevent dividing by 0
-        if (dist == 0):
-            dist = 1
-        ghost_all_dists.append(dist)
-
-    # check if we wan't to get closer to each ghost
-    ghost_all_vulnerabilities = []
-    for ghost_state in gameState.getGhostStates():
-        if ghost_state.scaredTimer > 0:
-            ghost_all_vulnerabilities.append(20)
-        else:
-            ghost_all_vulnerabilities.append(-20)
-
-    # compute the total bonus for ghosts closnes
-    ghosts_score = 0
-    for i in range(len(ghost_all_dists)):
-        ghosts_score += 1/float(ghost_all_dists[i]*ghost_all_vulnerabilities[i])
-
-    # Combination of the above calculated metrics.
-    return gameState.getScore() + \
-            (1/float(min_food_dist)) + \
-            (1/float(min_capsule_dist)) + \
-            ghosts_score + \
-            np.random.choice([0, 1], p=[0.85, 0.15])
 
 
 #     ********* MultiAgent Search Agents- sections c,d,e,f*********
@@ -222,7 +172,6 @@ class MultiAgentSearchAgent(Agent):
 ######################################################################################
 # c: implementing minimax
 
-#FIXME: use multiproccessing if i have time for competition
 class MinimaxAgent(MultiAgentSearchAgent):
     """
       Your minimax agent
@@ -233,9 +182,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         # for terminal state or depth reached we will return the huristic estimation
         if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
-
-        #FIXME: improvment - if there is only one possible acction return it,
-        # don't need to genereate successor or to compute minmax value
 
         # get all successor states
         legal_action = gameState.getLegalActions(agent)
@@ -343,7 +289,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
 ######################################################################################
 # d: implementing alpha-beta
 
-#FIXME: use multiproccessing if i have time for competition
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning
@@ -355,12 +300,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if isTerminalState(gameState) or depth == 0:
             return self.evaluationFunction(gameState)
 
-        #FIXME: improvment - if there is only one possible acction return it,
-        # don't need to genereate successor or to compute minmax value
-
         # get all successor states
         legal_action = gameState.getLegalActions(agent)
-        #FIXME: sort children according to heuristic value for the competition
         childrens = [gameState.generateSuccessor(agent, action) for action in legal_action]
 
         # find the next agent modulo the number of agents
@@ -376,7 +317,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         # pacman turn
         if agent == 0:
             cur_max = -np.inf
-            for c in childrens:
+            # sort childrens in descending order for better prunning
+            for c in sorted(childrens, key=self.evaluationFunction, reverse=True):
                 v = self.rbAlphaBeta(c, next_agent, next_depth, alpha, beta)
                 cur_max = max(cur_max, v)
                 alpha = max(alpha, cur_max)
@@ -387,7 +329,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         # ghost turn
         else:
             cur_min = np.inf
-            for c in childrens:
+            # sort childrens in increasing order for better prunning
+            for c in sorted(childrens, key=self.evaluationFunction, reverse=False):
                 v = self.rbAlphaBeta(c, next_agent, next_depth, alpha, beta)
                 cur_min = min(cur_min, v)
                 beta = min(beta, cur_min)
@@ -404,8 +347,19 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         start = time.time()
 
-        # Collect legal moves and successor states
+        # Collect sorted legal moves for better prunning
         legalMoves = gameState.getLegalActions()
+        legalMoves.sort(key=lambda a: \
+                self.evaluationFunction(gameState.generatePacmanSuccessor(a)), \
+                reverse=True)
+
+        # if there is only one possible acction return it - faster
+        if len(legalMoves) == 1:
+            end = time.time()
+            # update meta data
+            self.time_total_actions += (end-start)
+            self.num_actions += 1
+            return legalMoves[0]
 
         # find the next agent modulo the number of agents
         next_agent = 1 % gameState.getNumAgents()
@@ -421,7 +375,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         alpha = -np.inf
 
-        #FIXME: sort children according to heuristic value for the competition
         # Choose one of the best actions
         scores = []
         for action in legalMoves:
@@ -453,9 +406,6 @@ def rbExpectimax(gameState, agent, depth, multiAgent, ghostType):
     # for terminal state or depth reached we will return the huristic estimation
     if isTerminalState(gameState) or depth == 0:
         return multiAgent.evaluationFunction(gameState)
-
-    #FIXME: improvment - if there is only one possible acction return it,
-    # don't need to genereate successor or to compute minmax value
 
     # find the next agent modulo the number of agents
     next_agent = (agent + 1) % gameState.getNumAgents()
@@ -512,6 +462,14 @@ class RandomExpectimaxAgent(MultiAgentSearchAgent):
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
 
+        # if there is only one possible acction return it - faster
+        if len(legalMoves) == 1:
+            end = time.time()
+            # update meta data
+            self.time_total_actions += (end-start)
+            self.num_actions += 1
+            return legalMoves[0]
+
         # find the next agent modulo the number of agents
         next_agent = 1 % gameState.getNumAgents()
 
@@ -562,6 +520,14 @@ class DirectionalExpectimaxAgent(MultiAgentSearchAgent):
 
         # Collect legal moves and successor states
         legalMoves = gameState.getLegalActions()
+
+        # if there is only one possible acction return it - faster
+        if len(legalMoves) == 1:
+            end = time.time()
+            # update meta data
+            self.time_total_actions += (end-start)
+            self.num_actions += 1
+            return legalMoves[0]
 
         # find the next agent modulo the number of agents
         next_agent = 1 % gameState.getNumAgents()
@@ -615,11 +581,6 @@ class CompetitionAgent(MultiAgentSearchAgent):
 
     start = time.time()
 
-    #FIXME: find the best agent and use it
-    #FIXME: make sure that if there is only 1 successor the other agents return
-    #       it directly
-    #FIXME: make sure that alpha beta is sorting successors according to heuristic
-    #       before pruning
     self.agent = AlphaBetaAgent()
 
     end = time.time()

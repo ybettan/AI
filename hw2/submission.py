@@ -64,6 +64,100 @@ def scoreEvaluationFunction(gameState):
   """
   return gameState.getScore()
 
+
+def figure_layout(gameState):
+    layout_switch = {
+        13: 'trapped',
+        14: 'minimax',
+        15: 'test',
+        26: 'capsule',
+        27: 'small',
+        29: 'contest',
+        31: 'medium',
+        33: 'tricky',
+        34: 'open',
+        55: 'original',
+    }
+    walls = gameState.getWalls()
+    h, w = walls.height, walls.width
+    layout = layout_switch.get(h + w, 'unknown')
+    if layout is 'unknown':
+        if h < 10 or w < 12:
+            return 'new_small'
+        else:
+            return 'new_large'
+    else:
+        return layout
+
+
+def figure_ghost_type(gameState, last_dist, directional):
+    ghosts_pos = gameState.getGhostPositions()
+    pacman_pos = gameState.getPacmanPosition()
+    confidence = False
+    if len(ghosts_pos) >= 2:
+        curr_dist = util.manhattanDistance(ghosts_pos[0], ghosts_pos[1])
+    else:
+        curr_dist = util.manhattanDistance(pacman_pos, ghosts_pos[0])
+    if curr_dist <= last_dist:
+        directional.append(1)
+    else:
+        directional.append(0)
+    sample_size = len(directional)
+    p = sum(directional) / sample_size
+    if p > 0.5:
+        ghost_type = 'directional'
+    else:
+        ghost_type = 'random'
+    if sample_size > 9:
+        if p * (1-p) > 0.21:
+            ghost_type = 'random'
+        confidence = True
+    return ghost_type, curr_dist, confidence
+
+
+def choose_agent(layout_type, ghost_type='random'):
+    agent_to_play = 'AlphaBeta'
+    depth_to_play = '4'
+    if ghost_type is 'random':
+        if layout_type is 'trapped':
+            agent_to_play = 'Better'
+        elif layout_type in ['capsule', 'medium', 'minimax', 'original', 'small']:
+            agent_to_play = 'AlphaBeta'
+        elif layout_type in ['contest', 'open']:
+            agent_to_play = 'RandomExpectimax'
+        elif layout_type in ['test', 'tricky']:
+            agent_to_play = 'DirectionalExpectimax'
+        elif layout_type is 'new_small':
+            agent_to_play = 'RandomExpectimax'
+        elif layout_type is 'new_large':
+            agent_to_play = 'RandomExpectimax'
+            depth_to_play = '3'
+        else:
+            depth_to_play = -1
+            print('Problemmmm')
+    elif ghost_type is 'directional':
+        if layout_type is 'test':
+            agent_to_play = 'Better'
+        elif layout_type in ['capsule', 'medium', 'open']:
+            agent_to_play = 'AlphaBeta'
+        elif layout_type in ['contest', 'original', 'trapped']:
+            agent_to_play = 'RandomExpectimax'
+        elif layout_type in ['minimax', 'small', 'tricky']:
+            agent_to_play = 'DirectionalExpectimax'
+        elif layout_type is 'new_small':
+            agent_to_play = 'AlphaBeta'
+        elif layout_type is 'new_large':
+            agent_to_play = 'AlphaBeta'
+            depth_to_play = '3'
+        else:
+            depth_to_play = -1
+            print('Problemmmm')
+    else:
+        depth_to_play = -1
+        print('Problemmmm')
+
+    return depth_to_play, agent_to_play
+
 ######################################################################################
 # b: implementing a better heuristic function
 
@@ -141,8 +235,6 @@ def betterEvaluationFunction_bestButSlower(gameState):
             (1/float(min_capsule_dist)) + \
             ghost_factor * (1/float(min_ghost_dist)) + \
             np.random.choice([0, 1], p=[0.85, 0.15])
-
-
 
 
 #     ********* MultiAgent Search Agents- sections c,d,e,f*********
@@ -567,22 +659,37 @@ class CompetitionAgent(MultiAgentSearchAgent):
     Your competition agent
   """
 
-  def __init__(self, evalFn = 'betterEvaluationFunction', depth = '4'):
+  def __init__(self, evalFn = 'betterEvaluationFunction', depth= '4'):
     super(CompetitionAgent, self).__init__(evalFn, depth)
     self.agent = None
+    self.first_time = True
+    self.agent_to_play = 'AlphaBeta'
+    self.last_dist = np.inf
+    self.directional = [0, 1]
 
   def getAction(self, gameState):
     """
       Returns the action using self.depth and self.evaluationFunction
 
     """
-
     # BEGIN_YOUR_CODE
+    if self.first_time:
+      layout_type = figure_layout(gameState)
+      ghost_type, self.last_dist, confidence = figure_ghost_type(gameState, self.last_dist, self.directional)
+      self.depth, self.agent_to_play = choose_agent(layout_type, ghost_type)
+      if confidence:
+        self.first_time = False
 
     start = time.time()
 
-    self.agent = AlphaBetaAgent()
-
+    if self.agent_to_play is 'Better':
+      self.agent = ReflexAgent()
+    elif self.agent_to_play is 'AlphaBeta':
+      self.agent = AlphaBetaAgent(depth= self.depth)
+    elif self.agent_to_play is 'RandomExpectimax':
+      self.agent = RandomExpectimaxAgent(depth= self.depth)
+    elif self.agent_to_play is 'DirectionalExpectimax':
+      self.agent = DirectionalExpectimaxAgent(depth= self.depth)
     end = time.time()
 
     # update meta data

@@ -5,14 +5,14 @@ from matplotlib import pyplot as plt
 
 
 # Score(layout)
-score_for_layouts_feflex_random_ghost = dict()
+score_for_layouts_reflex_random_ghost = dict()
 score_for_layouts_better_random_ghost = dict()
 score_for_layouts_minimax_random_ghost = dict()
 score_for_layouts_alpha_beta_random_ghost = dict()
 score_for_layouts_random_expectimax_random_ghost = dict()
 score_for_layouts_directional_expectimax_random_ghost = dict()
 
-score_for_layouts_feflex_directional_ghost = dict()
+score_for_layouts_reflex_directional_ghost = dict()
 score_for_layouts_better_directional_ghost = dict()
 score_for_layouts_minimax_directional_ghost = dict()
 score_for_layouts_alpha_beta_directional_ghost = dict()
@@ -20,14 +20,14 @@ score_for_layouts_random_expectimax_directional_ghost = dict()
 score_for_layouts_directional_expectimax_directional_ghost = dict()
 
 # TurnTime(layout)
-turn_time_for_layouts_feflex_random_ghost = dict()
+turn_time_for_layouts_reflex_random_ghost = dict()
 turn_time_for_layouts_better_random_ghost = dict()
 turn_time_for_layouts_minimax_random_ghost = dict()
 turn_time_for_layouts_alpha_beta_random_ghost = dict()
 turn_time_for_layouts_random_expectimax_random_ghost = dict()
 turn_time_for_layouts_directional_expectimax_random_ghost = dict()
 
-turn_time_for_layouts_feflex_directional_ghost = dict()
+turn_time_for_layouts_reflex_directional_ghost = dict()
 turn_time_for_layouts_better_directional_ghost = dict()
 turn_time_for_layouts_minimax_directional_ghost = dict()
 turn_time_for_layouts_alpha_beta_directional_ghost = dict()
@@ -35,14 +35,14 @@ turn_time_for_layouts_random_expectimax_directional_ghost = dict()
 turn_time_for_layouts_directional_expectimax_directional_ghost = dict()
 
 # TotalTime(layout)
-total_time_for_layouts_feflex_random_ghost = dict()
+total_time_for_layouts_reflex_random_ghost = dict()
 total_time_for_layouts_better_random_ghost = dict()
 total_time_for_layouts_minimax_random_ghost = dict()
 total_time_for_layouts_alpha_beta_random_ghost = dict()
 total_time_for_layouts_random_expectimax_random_ghost = dict()
 total_time_for_layouts_directional_expectimax_random_ghost = dict()
 
-total_time_for_layouts_feflex_directional_ghost = dict()
+total_time_for_layouts_reflex_directional_ghost = dict()
 total_time_for_layouts_better_directional_ghost = dict()
 total_time_for_layouts_minimax_directional_ghost = dict()
 total_time_for_layouts_alpha_beta_directional_ghost = dict()
@@ -68,13 +68,13 @@ with open("data_files/experiments_extended.csv", 'r') as f:
         # reflex
         if agent == 'ReflexAgent':
             if ghost == 'RandomGhost':
-                score_for_layouts_feflex_random_ghost[layout] = avg_score
-                turn_time_for_layouts_feflex_random_ghost[layout] = avg_turn_time
-                total_time_for_layouts_feflex_random_ghost[layout] = avg_total_time
+                score_for_layouts_reflex_random_ghost[layout] = avg_score
+                turn_time_for_layouts_reflex_random_ghost[layout] = avg_turn_time
+                total_time_for_layouts_reflex_random_ghost[layout] = avg_total_time
             else:
-                score_for_layouts_feflex_directional_ghost[layout] = avg_score
-                turn_time_for_layouts_feflex_directional_ghost[layout] = avg_turn_time
-                total_time_for_layouts_feflex_directional_ghost[layout] = avg_total_time
+                score_for_layouts_reflex_directional_ghost[layout] = avg_score
+                turn_time_for_layouts_reflex_directional_ghost[layout] = avg_turn_time
+                total_time_for_layouts_reflex_directional_ghost[layout] = avg_total_time
 
         # better
         if agent == 'BetterAgent':
@@ -139,11 +139,80 @@ with open("data_files/experiments_extended.csv", 'r') as f:
 
 
 #------------------------------------------------------------------------------
+#                  Score(layout) sum on 2 ghost types
+#------------------------------------------------------------------------------
+
+score_for_layouts_reflex_sum_ghost = \
+        score_for_layouts_reflex_random_ghost.copy()
+for key in score_for_layouts_reflex_directional_ghost.keys():
+    score_for_layouts_reflex_sum_ghost[key] += \
+            score_for_layouts_reflex_directional_ghost[key]
+
+score_for_layouts_better_sum_ghost = \
+        score_for_layouts_better_random_ghost.copy()
+for key in score_for_layouts_better_directional_ghost.keys():
+    score_for_layouts_better_sum_ghost[key] += \
+            score_for_layouts_better_directional_ghost[key]
+
+score_for_layouts_alpha_beta_sum_ghost = \
+        score_for_layouts_alpha_beta_random_ghost.copy()
+for key in score_for_layouts_alpha_beta_directional_ghost.keys():
+    score_for_layouts_alpha_beta_sum_ghost[key] += \
+            score_for_layouts_alpha_beta_directional_ghost[key]
+
+score_for_layouts_random_expectimax_sum_ghost = \
+        score_for_layouts_random_expectimax_random_ghost.copy()
+for key in score_for_layouts_random_expectimax_directional_ghost.keys():
+    score_for_layouts_random_expectimax_sum_ghost[key] += \
+            score_for_layouts_random_expectimax_directional_ghost[key]
+
+score_for_layouts_directional_expectimax_sum_ghost = \
+        score_for_layouts_directional_expectimax_directional_ghost.copy()
+for key in score_for_layouts_directional_expectimax_directional_ghost.keys():
+    score_for_layouts_directional_expectimax_sum_ghost[key] += \
+            score_for_layouts_directional_expectimax_directional_ghost[key]
+
+plt.plot(score_for_layouts_reflex_sum_ghost.keys(), \
+        score_for_layouts_reflex_sum_ghost.values(), \
+        label='ReflexAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_better_sum_ghost.keys(), \
+        score_for_layouts_better_sum_ghost.values(), \
+        label='BetterAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_alpha_beta_sum_ghost.keys(), \
+        score_for_layouts_alpha_beta_sum_ghost.values(), \
+        label='AlphaBetaAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_random_expectimax_sum_ghost.keys(), \
+        score_for_layouts_random_expectimax_sum_ghost.values(), \
+        label='RandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_directional_expectimax_sum_ghost.keys(), \
+        score_for_layouts_directional_expectimax_sum_ghost.values(), \
+        label='DirectionalandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+
+
+plt.xlabel("Layout")
+plt.ylabel("Avg Score")
+plt.title("AvgScore(Layout), depth=4, RandomGhost+DirectionalGhost")
+plt.legend()
+plt.grid()
+plt.show()
+
+
+#------------------------------------------------------------------------------
 #                      Score(layout) random ghost
 #------------------------------------------------------------------------------
 
-plt.plot(score_for_layouts_feflex_random_ghost.keys(), \
-        score_for_layouts_feflex_random_ghost.values(), \
+plt.plot(score_for_layouts_reflex_random_ghost.keys(), \
+        score_for_layouts_reflex_random_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")
@@ -180,8 +249,8 @@ plt.show()
 #                      Score(layout) directional ghost
 #------------------------------------------------------------------------------
 
-plt.plot(score_for_layouts_feflex_directional_ghost.keys(), \
-        score_for_layouts_feflex_directional_ghost.values(), \
+plt.plot(score_for_layouts_reflex_directional_ghost.keys(), \
+        score_for_layouts_reflex_directional_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")
@@ -220,8 +289,8 @@ plt.show()
 #                      TurnTime(layout) random ghost
 #------------------------------------------------------------------------------
 
-plt.plot(turn_time_for_layouts_feflex_random_ghost.keys(), \
-        turn_time_for_layouts_feflex_random_ghost.values(), \
+plt.plot(turn_time_for_layouts_reflex_random_ghost.keys(), \
+        turn_time_for_layouts_reflex_random_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")
@@ -258,8 +327,8 @@ plt.show()
 #                      TurnTime(layout) directional ghost
 #------------------------------------------------------------------------------
 
-plt.plot(turn_time_for_layouts_feflex_directional_ghost.keys(), \
-        turn_time_for_layouts_feflex_directional_ghost.values(), \
+plt.plot(turn_time_for_layouts_reflex_directional_ghost.keys(), \
+        turn_time_for_layouts_reflex_directional_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")
@@ -296,8 +365,8 @@ plt.show()
 #                      TotlaTime(layout) random ghost
 #------------------------------------------------------------------------------
 
-plt.plot(total_time_for_layouts_feflex_random_ghost.keys(), \
-        total_time_for_layouts_feflex_random_ghost.values(), \
+plt.plot(total_time_for_layouts_reflex_random_ghost.keys(), \
+        total_time_for_layouts_reflex_random_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")
@@ -334,8 +403,8 @@ plt.show()
 #                      TotlaTime(layout) directional ghost
 #------------------------------------------------------------------------------
 
-plt.plot(total_time_for_layouts_feflex_directional_ghost.keys(), \
-        total_time_for_layouts_feflex_directional_ghost.values(), \
+plt.plot(total_time_for_layouts_reflex_directional_ghost.keys(), \
+        total_time_for_layouts_reflex_directional_ghost.values(), \
         label='ReflexAgent', \
         linestyle="-", \
         marker="o")

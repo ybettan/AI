@@ -11,6 +11,7 @@ score_for_layouts_minimax_random_ghost = dict()
 score_for_layouts_alpha_beta_random_ghost = dict()
 score_for_layouts_random_expectimax_random_ghost = dict()
 score_for_layouts_directional_expectimax_random_ghost = dict()
+score_for_layouts_competition_random_ghost = dict()
 
 score_for_layouts_reflex_directional_ghost = dict()
 score_for_layouts_better_directional_ghost = dict()
@@ -18,6 +19,7 @@ score_for_layouts_minimax_directional_ghost = dict()
 score_for_layouts_alpha_beta_directional_ghost = dict()
 score_for_layouts_random_expectimax_directional_ghost = dict()
 score_for_layouts_directional_expectimax_directional_ghost = dict()
+score_for_layouts_competition_directional_ghost = dict()
 
 # TurnTime(layout)
 turn_time_for_layouts_reflex_random_ghost = dict()
@@ -26,6 +28,7 @@ turn_time_for_layouts_minimax_random_ghost = dict()
 turn_time_for_layouts_alpha_beta_random_ghost = dict()
 turn_time_for_layouts_random_expectimax_random_ghost = dict()
 turn_time_for_layouts_directional_expectimax_random_ghost = dict()
+turn_time_for_layouts_competition_random_ghost = dict()
 
 turn_time_for_layouts_reflex_directional_ghost = dict()
 turn_time_for_layouts_better_directional_ghost = dict()
@@ -33,6 +36,7 @@ turn_time_for_layouts_minimax_directional_ghost = dict()
 turn_time_for_layouts_alpha_beta_directional_ghost = dict()
 turn_time_for_layouts_random_expectimax_directional_ghost = dict()
 turn_time_for_layouts_directional_expectimax_directional_ghost = dict()
+turn_time_for_layouts_competition_directional_ghost = dict()
 
 # TotalTime(layout)
 total_time_for_layouts_reflex_random_ghost = dict()
@@ -41,6 +45,7 @@ total_time_for_layouts_minimax_random_ghost = dict()
 total_time_for_layouts_alpha_beta_random_ghost = dict()
 total_time_for_layouts_random_expectimax_random_ghost = dict()
 total_time_for_layouts_directional_expectimax_random_ghost = dict()
+total_time_for_layouts_competition_random_ghost = dict()
 
 total_time_for_layouts_reflex_directional_ghost = dict()
 total_time_for_layouts_better_directional_ghost = dict()
@@ -48,6 +53,7 @@ total_time_for_layouts_minimax_directional_ghost = dict()
 total_time_for_layouts_alpha_beta_directional_ghost = dict()
 total_time_for_layouts_random_expectimax_directional_ghost = dict()
 total_time_for_layouts_directional_expectimax_directional_ghost = dict()
+total_time_for_layouts_competition_directional_ghost = dict()
 
 
 # read input from file
@@ -131,6 +137,17 @@ with open("data_files/experiments_extended.csv", 'r') as f:
                 turn_time_for_layouts_directional_expectimax_directional_ghost[layout] = avg_turn_time
                 total_time_for_layouts_directional_expectimax_directional_ghost[layout] = avg_total_time
 
+        # competition
+        if agent == 'CompetitionAgent':
+            if ghost == 'RandomGhost':
+                score_for_layouts_competition_random_ghost[layout] = avg_score
+                turn_time_for_layouts_competition_random_ghost[layout] = avg_turn_time
+                total_time_for_layouts_competition_random_ghost[layout] = avg_total_time
+            else:
+                score_for_layouts_competition_directional_ghost[layout] = avg_score
+                turn_time_for_layouts_competition_directional_ghost[layout] = avg_turn_time
+                total_time_for_layouts_competition_directional_ghost[layout] = avg_total_time
+
 
 
 #==============================================================================
@@ -167,10 +184,16 @@ for key in score_for_layouts_random_expectimax_directional_ghost.keys():
             score_for_layouts_random_expectimax_directional_ghost[key]
 
 score_for_layouts_directional_expectimax_sum_ghost = \
-        score_for_layouts_directional_expectimax_directional_ghost.copy()
+        score_for_layouts_directional_expectimax_random_ghost.copy()
 for key in score_for_layouts_directional_expectimax_directional_ghost.keys():
     score_for_layouts_directional_expectimax_sum_ghost[key] += \
             score_for_layouts_directional_expectimax_directional_ghost[key]
+
+score_for_layouts_competition_sum_ghost = \
+        score_for_layouts_competition_random_ghost.copy()
+for key in score_for_layouts_competition_directional_ghost.keys():
+    score_for_layouts_competition_sum_ghost[key] += \
+            score_for_layouts_competition_directional_ghost[key]
 
 plt.plot(score_for_layouts_reflex_sum_ghost.keys(), \
         score_for_layouts_reflex_sum_ghost.values(), \
@@ -195,6 +218,11 @@ plt.plot(score_for_layouts_random_expectimax_sum_ghost.keys(), \
 plt.plot(score_for_layouts_directional_expectimax_sum_ghost.keys(), \
         score_for_layouts_directional_expectimax_sum_ghost.values(), \
         label='DirectionalandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_competition_sum_ghost.keys(), \
+        score_for_layouts_competition_sum_ghost.values(), \
+        label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
 
@@ -236,6 +264,11 @@ plt.plot(score_for_layouts_directional_expectimax_random_ghost.keys(), \
         label='DirectionalandomExpectimaxAgent', \
         linestyle="-", \
         marker="o")
+plt.plot(score_for_layouts_competition_random_ghost.keys(), \
+        score_for_layouts_competition_random_ghost.values(), \
+        label='CompetitionAgent', \
+        linestyle="-", \
+        marker="o")
 
 
 plt.xlabel("Layout")
@@ -272,6 +305,11 @@ plt.plot(score_for_layouts_random_expectimax_directional_ghost.keys(), \
 plt.plot(score_for_layouts_directional_expectimax_directional_ghost.keys(), \
         score_for_layouts_directional_expectimax_directional_ghost.values(), \
         label='DirectionalandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(score_for_layouts_competition_directional_ghost.keys(), \
+        score_for_layouts_competition_directional_ghost.values(), \
+        label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
 
@@ -314,6 +352,11 @@ plt.plot(turn_time_for_layouts_directional_expectimax_random_ghost.keys(), \
         label='DirectionalandomExpectimaxAgent', \
         linestyle="-", \
         marker="o")
+plt.plot(turn_time_for_layouts_competition_random_ghost.keys(), \
+        turn_time_for_layouts_competition_random_ghost.values(), \
+        label='CompetitionAgent', \
+        linestyle="-", \
+        marker="o")
 
 
 plt.xlabel("Layout")
@@ -350,6 +393,11 @@ plt.plot(turn_time_for_layouts_random_expectimax_directional_ghost.keys(), \
 plt.plot(turn_time_for_layouts_directional_expectimax_directional_ghost.keys(), \
         turn_time_for_layouts_directional_expectimax_directional_ghost.values(), \
         label='DirectionalandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(turn_time_for_layouts_competition_directional_ghost.keys(), \
+        turn_time_for_layouts_competition_directional_ghost.values(), \
+        label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
 
@@ -390,6 +438,11 @@ plt.plot(total_time_for_layouts_directional_expectimax_random_ghost.keys(), \
         label='DirectionalandomExpectimaxAgent', \
         linestyle="-", \
         marker="o")
+plt.plot(total_time_for_layouts_competition_random_ghost.keys(), \
+        total_time_for_layouts_competition_random_ghost.values(), \
+        label='CompetitionAgent', \
+        linestyle="-", \
+        marker="o")
 
 
 plt.xlabel("Layout")
@@ -426,6 +479,11 @@ plt.plot(total_time_for_layouts_random_expectimax_directional_ghost.keys(), \
 plt.plot(total_time_for_layouts_directional_expectimax_directional_ghost.keys(), \
         total_time_for_layouts_directional_expectimax_directional_ghost.values(), \
         label='DirectionalandomExpectimaxAgent', \
+        linestyle="-", \
+        marker="o")
+plt.plot(total_time_for_layouts_competition_directional_ghost.keys(), \
+        total_time_for_layouts_competition_directional_ghost.values(), \
+        label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
 

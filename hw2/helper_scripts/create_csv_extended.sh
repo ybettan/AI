@@ -41,6 +41,12 @@ while read line; do
 done < data_files/experiments_extended_directional_expectimax_part_2.csv
 
 
+# read experiments_extended_competition.csv
+while read line; do
+    echo $line >> data_files/experiments_extended.csv
+done < data_files/experiments_extended_competition.csv
+
+
 ## remove all temporary files
 #rm data_files/experiments_extended_reflex_better.csv
 #rm data_files/experiments_extended_minimax.csv

@@ -65,7 +65,6 @@ def scoreEvaluationFunction(gameState):
   return gameState.getScore()
 
 
-
 ######################################################################################
 # b: implementing a better heuristic function
 
@@ -568,14 +567,16 @@ class CompetitionAgent(MultiAgentSearchAgent):
     """
 
     def __init__(self, evalFn = 'betterEvaluationFunction', depth= '4'):
-      super(CompetitionAgent, self).__init__(evalFn, depth)
-      self.agent = None
-      self.first_time = True
-      self.agent_to_play = 'AlphaBeta'
-      self.last_dist = np.inf
-      self.directional = [0, 1]
+        super(CompetitionAgent, self).__init__(evalFn, depth)
+        self.agent = None
+        self.initial = True
+        self.agent_to_play = 'AlphaBeta'
+        self.directional = []
+        self.next_pos = [None, None]
+        self.save_time = False
 
-    def figure_layout(self, gameState):
+    @staticmethod
+    def figure_layout(gameState):
         layout_switch = {
             13: 'trapped',
             14: 'minimax',
@@ -599,80 +600,118 @@ class CompetitionAgent(MultiAgentSearchAgent):
         else:
             return layout
 
-    def figure_ghost_type(self, gameState, last_dist, directional):
+    @staticmethod
+    def get_ghosts_dists(gameState):
+        dists = []
+        pacman_position = gameState.getPacmanPosition()
+        for ghost_position in gameState.getGhostPositions():
+            dists.append(util.manhattanDistance(ghost_position, pacman_position))
+        return dists
+
+    @staticmethod
+    def figure_ghost_type(gameState, next_pos, directional, ghost_dists):
         ghosts_pos = gameState.getGhostPositions()
-        pacman_pos = gameState.getPacmanPosition()
-        confidence = False
-        if len(ghosts_pos) >= 2:
-            curr_dist = util.manhattanDistance(ghosts_pos[0], ghosts_pos[1])
-        elif len(ghosts_pos) == 1:
-            curr_dist = util.manhattanDistance(pacman_pos, ghosts_pos[0])
-        else:
-            return 'no_ghosts', last_dist, True
-
-        if curr_dist <= last_dist:
-            directional.append(1)
-        else:
-            directional.append(0)
-
-        sample_size = len(directional)
-        p = sum(directional) / sample_size
-        if p > 0.5:
-            ghost_type = 'directional'
-        else:
-            ghost_type = 'random'
-        if sample_size > 9:
-            if p * (1-p) > 0.21:
+        ghost_type = 'random'
+        index = 0
+        if len(ghost_dists) == 0:
+            return 'no_ghosts', next_pos, directional, True
+        for g_pos in ghosts_pos:
+            if next_pos[index] == g_pos:
+                directional.append(1)
+                ghost_type = 'directional'
+            elif next_pos[index] is not None:
+                directional.append(0)
                 ghost_type = 'random'
-            confidence = True
-        return ghost_type, curr_dist, confidence
+            g = DirectionalGhost(index+1)
+            d = g.getAction(gameState)
+            if d is 'East':
+                next_pos[index] = tuple([ghosts_pos[index][0]+1, ghosts_pos[index][1]])
+            elif d is 'West':
+                next_pos[index] = tuple([ghosts_pos[index][0]-1, ghosts_pos[index][1]])
+            elif d is 'North':
+                next_pos[index] = tuple([ghosts_pos[index][0], ghosts_pos[index][1]+1])
+            elif d is 'South':
+                next_pos[index] = tuple([ghosts_pos[index][0], ghosts_pos[index][1]-1])
+            index += 1
 
+        if len(directional) > 5:
+            if sum(directional) > 4:
+                return 'directional', next_pos, directional, False
+            else:
+                return 'random', next_pos, directional, False
 
-    def choose_agent(self, layout_type, ghost_type='random'):
-        agent_to_play = 'AlphaBeta'
-        depth_to_play = '4'
+        return ghost_type, next_pos, directional, True
+
+    def choose_agent(self, layout_type, ghost_dists, ghost_type='random'):
+        self.agent_to_play = 'AlphaBeta'
+        self.depth = '4'
+
+        if layout_type in ['open', 'tricky']:
+            if min(ghost_dists) > 6:
+                self.agent_to_play = 'AlphaBeta'
+                self.depth = '2'
+            elif min(ghost_dists) > 4:
+                self.agent_to_play = 'AlphaBeta'
+                self.depth = '3'
+            else:
+                self.agent_to_play = 'RandomExpectimax'
+            self.save_time = True
+            return
+        if layout_type is 'original':
+            if min(ghost_dists) > 6:
+                self.agent_to_play = 'AlphaBeta'
+                self.depth = '3'
+            elif min(ghost_dists) > 4:
+                self.agent_to_play = 'AlphaBeta'
+                self.depth = '4'
+            else:
+                if ghost_type is 'directional':
+                    self.agent_to_play = 'RandomExpectimax'
+                else:
+                    self.agent_to_play = 'AlphaBeta'
+                    self.depth = '4'
+            self.save_time = True
+            return
+
         if ghost_type is 'random':
             if layout_type is 'trapped':
-                agent_to_play = 'Better'
-            elif layout_type in ['capsule', 'medium', 'minimax', 'original', 'small', 'open']:
-                agent_to_play = 'AlphaBeta'
+                self.agent_to_play = 'Better'
+            elif layout_type in ['capsule', 'medium', 'minimax', 'small']:
+                self.agent_to_play = 'AlphaBeta'
             elif layout_type is 'contest':
-                agent_to_play = 'RandomExpectimax'
-            elif layout_type in ['test', 'tricky']:
-                agent_to_play = 'DirectionalExpectimax'
+                self.agent_to_play = 'RandomExpectimax'
+            elif layout_type is 'test':
+                self.agent_to_play = 'DirectionalExpectimax'
             elif layout_type is 'new_small':
-                agent_to_play = 'RandomExpectimax'
+                self.agent_to_play = 'RandomExpectimax'
             elif layout_type is 'new_large':
-                agent_to_play = 'RandomExpectimax'
-                depth_to_play = '3'
+                self.agent_to_play = 'RandomExpectimax'
+                self.depth = '3'
             else:
-                depth_to_play = -1
-                print('Problemmmm')
+                exit(-1)
         elif ghost_type is 'directional':
             if layout_type is 'test':
-                agent_to_play = 'Better'
-            elif layout_type in ['capsule', 'medium', 'open']:
-                agent_to_play = 'AlphaBeta'
-            elif layout_type in ['contest', 'original', 'trapped']:
-                agent_to_play = 'RandomExpectimax'
-            elif layout_type in ['minimax', 'small', 'tricky']:
-                agent_to_play = 'DirectionalExpectimax'
+                self.agent_to_play = 'Better'
+            elif layout_type in ['capsule', 'medium']:
+                self.agent_to_play = 'AlphaBeta'
+            elif layout_type in ['contest', 'trapped', 'small']:
+                self.agent_to_play = 'RandomExpectimax'
+            elif layout_type in ['minimax']:
+                self.agent_to_play = 'DirectionalExpectimax'
             elif layout_type is 'new_small':
-                agent_to_play = 'AlphaBeta'
+                self.agent_to_play = 'AlphaBeta'
             elif layout_type is 'new_large':
-                agent_to_play = 'AlphaBeta'
-                depth_to_play = '3'
+                self.agent_to_play = 'AlphaBeta'
+                self.depth = '3'
             else:
-                depth_to_play = -1
-                print('Problemmmm')
+                exit(-1)
         elif ghost_type is 'no_ghosts':
-            agent_to_play = 'AlphaBeta'
-            depth_to_play = '4'
+            self.agent_to_play = 'AlphaBeta'
+            self.depth = '4'
         else:
-            depth_to_play = -1
-            print('Problemmmm')
-
-        return depth_to_play, agent_to_play
+            exit(-1)
+        self.save_time = False
+        return
 
     def getAction(self, gameState):
         """
@@ -680,12 +719,19 @@ class CompetitionAgent(MultiAgentSearchAgent):
 
         """
         # BEGIN_YOUR_CODE
-        if self.first_time:
-            layout_type = self.figure_layout(gameState)
-            ghost_type, self.last_dist, confidence = self.figure_ghost_type(gameState, self.last_dist, self.directional)
-            self.depth, self.agent_to_play = self.choose_agent(layout_type, ghost_type)
-            if confidence:
-                self.first_time = False
+
+        layout_type, ghost_type = None, None
+
+        if self.initial:
+            layout_type = CompetitionAgent.figure_layout(gameState)
+            ghost_dists = CompetitionAgent.get_ghosts_dists(gameState)
+            ghost_type, self.next_pos, self.directional, self.initial =\
+                CompetitionAgent.figure_ghost_type(gameState, self.next_pos, self.directional, ghost_dists)
+            self.save_time = self.choose_agent(layout_type, ghost_dists, ghost_type)
+
+        if self.save_time:
+            ghost_dists = CompetitionAgent.get_ghosts_dists(gameState)
+            self.choose_agent(layout_type, ghost_dists, ghost_type)
 
         start = time.time()
 

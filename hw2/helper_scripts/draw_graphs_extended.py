@@ -443,6 +443,11 @@ plt.plot(total_time_for_layouts_competition_random_ghost.keys(), \
         label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
+plt.plot(total_time_for_layouts_competition_random_ghost.keys(), \
+        [30] * len(total_time_for_layouts_competition_random_ghost.keys()), \
+        label='Restriction', \
+        color='black', \
+        linestyle="dashed")
 
 
 plt.xlabel("Layout")
@@ -486,6 +491,11 @@ plt.plot(total_time_for_layouts_competition_directional_ghost.keys(), \
         label='CompetitionAgent', \
         linestyle="-", \
         marker="o")
+plt.plot(total_time_for_layouts_competition_directional_ghost.keys(), \
+        [30] * len(total_time_for_layouts_competition_directional_ghost.keys()), \
+        label='Restriction', \
+        color='black', \
+        linestyle="dashed")
 
 
 plt.xlabel("Layout")

@@ -33,6 +33,7 @@ class knn_classifier(abstract_classifier):
             elif dist < max_k_dist:
                 k_dists[max_k_idx] = dist
                 k_tags[max_k_idx] = neighbor_tag
+            #FIXME: what to return in case of a tie?
             # calc the majority call - 0 in case of tie
             max_k_dist = max(k_dists)
             max_k_idx = k_dists.index(max_k_dist)
@@ -52,7 +53,7 @@ class knn_factory(abstract_classifier_factory):
         return knn_classifier(data, labels, self.K)
 
 
-def split_crosscheck_groups(dataset, num_folds=10):
+def split_crosscheck_groups(dataset, num_folds):
     true_exmp, false_exmp = [], []
     # split the data to True and False examples
     for example in dataset:

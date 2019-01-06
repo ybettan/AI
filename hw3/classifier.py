@@ -1,7 +1,6 @@
 from hw3_utils import abstract_classifier, abstract_classifier_factory
 from hw3_utils import load_data
-#FIXME: does those packages are allowed ?
-import csv
+#FIXME: this package needs to be remove
 import random
 
 
@@ -33,13 +32,11 @@ class knn_classifier(abstract_classifier):
             elif dist < max_k_dist:
                 k_dists[max_k_idx] = dist
                 k_tags[max_k_idx] = neighbor_tag
-            #FIXME: what to return in case of a tie?
             # calc the majority call - 0 in case of tie
             max_k_dist = max(k_dists)
             max_k_idx = k_dists.index(max_k_dist)
         # when done all examples
-        majority_call = bool(round(sum(k_tags) / len(k_tags)))
-        #FIXME: return Boolean on Integer?
+        majority_call = round(sum(k_tags) / len(k_tags))
         return majority_call
 
 
@@ -53,6 +50,8 @@ class knn_factory(abstract_classifier_factory):
         return knn_classifier(data, labels, self.K)
 
 
+#FIXME: this needs to be updated, also remove random module here - it is not
+# allowed, look at the mail to see dataset type (it is a tuple (features, labels))
 def split_crosscheck_groups(dataset, num_folds):
     true_exmp, false_exmp = [], []
     # split the data to True and False examples

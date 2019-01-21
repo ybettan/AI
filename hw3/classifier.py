@@ -1,5 +1,6 @@
 from hw3_utils import abstract_classifier, abstract_classifier_factory, load_data
 from sklearn import tree, linear_model
+import random
 
 
 def euclidean_distance(x, y):
@@ -90,18 +91,22 @@ class perceptron_factory(abstract_classifier_factory):
 def split_crosscheck_groups(dataset, num_folds):
     true_exmp = dataset[0][dataset[1]]
     false_exmp = [exmp for exmp in dataset[0] if exmp not in true_exmp]
+    random.shuffle(true_exmp)
+    random.shuffle(false_exmp)
     # divide into separate files
     true_sample_size = int(len(true_exmp)/num_folds)
     false_sample_size = int(len(false_exmp)/num_folds)
     for fold_i in range(num_folds):
-        #FIXME: what happens if dataset % num_folds != 0, do we miss some at the last group ?
-        true_i = true_exmp[true_sample_size*fold_i:true_sample_size*(fold_i + 1), :]
-        false_i = false_exmp[false_sample_size*fold_i:false_sample_size*(fold_i+1)][:]
         with open('ecg_fold_'+str(fold_i+1)+'.data', 'w') as f:
-            for i in range(true_sample_size):
-                f.write(', '.join(map(str, true_i[i][:])) + ', 1\n')
-            for i in range(false_sample_size):
-                f.write(', '.join(map(str, false_i[i][:])) + ', 0\n')
+            for i in range(true_sample_size * fold_i, true_sample_size*(fold_i + 1)):
+                f.write(', '.join(map(str, true_exmp[i, :])) + ', 1\n')
+            for i in range(false_sample_size*fold_i, false_sample_size*(fold_i+1)):
+                f.write(', '.join(map(str, false_exmp[i][:])) + ', 0\n')
+            if fold_i == (num_folds - 1):
+                true_mod = len(true_exmp) - num_folds * true_sample_size
+                false_mod = len(false_exmp) - num_folds * false_sample_size
+                f.write(', '.join(map(str, true_exmp[-true_mod, :])) + ', 1\n')
+                f.write(', '.join(map(str, false_exmp[-false_mod][:])) + ', 0\n')
 
 
 def load_k_fold_data(fold_idx):
@@ -155,8 +160,3 @@ percp_acc, percp_err = evaluate(pf, 2)
 with open('experiment12.csv', 'w') as f:
     f.write(', '.join([str(1), str(tree_acc), str(tree_err)]) + '\n')
     f.write(', '.join([str(2), str(percp_acc), str(percp_err)]) + '\n')
-
-
-import plot_results
-plot_results.plot_knn_accuracy(k_vals, acc_list)
-

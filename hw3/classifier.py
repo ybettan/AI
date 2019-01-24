@@ -120,7 +120,7 @@ def load_k_fold_data(fold_idx):
 
 
 def evaluate(classifier_factory, k):
-    Accuracy = 0
+    accuracy = 0
     # create training and test sets for the i'th fold
     full_train_data, full_train_tags, _ = load_data()
     full_train_set = [list(l) for l in full_train_data]
@@ -131,32 +131,37 @@ def evaluate(classifier_factory, k):
         classifier = classifier_factory.train(fold_train_set, fold_train_tags)
 
         # compute accuracy and error
-        Accuracy += classifier.score(fold_test_set[0], fold_test_set[1])
+        accuracy += classifier.score(fold_test_set[0], fold_test_set[1])
 
-    Accuracy /= k
-    Error = 1 - Accuracy
-    return Accuracy, Error
-
-
-train_set, train_tags, test_set = load_data()
-split_crosscheck_groups((train_set, train_tags), 2)
-
-with open('experiment6.csv', 'w') as f:
-    k_vals, acc_list, err_list = [1, 3, 5, 7, 13], [], []
-    for k in k_vals:
-        knn = knn_factory(k)
-        acc, err = evaluate(knn, 2)
-        f.write(', '.join([str(k), str(acc), str(err)]) + '\n')
-        acc_list.append(acc)
-        err_list.append(err_list)
+    accuracy /= k
+    error = 1 - accuracy
+    return accuracy, error
 
 
-tf = tree_factory()
-tree_acc, tree_err = evaluate(tf, 2)
+def main():
+    train_set, train_tags, test_set = load_data()
+    split_crosscheck_groups((train_set, train_tags), 2)
 
-pf = perceptron_factory()
-percp_acc, percp_err = evaluate(pf, 2)
+    with open('experiment6.csv', 'w') as f:
+        k_vals, acc_list, err_list = [1, 3, 5, 7, 13], [], []
+        for k in k_vals:
+            knn = knn_factory(k)
+            acc, err = evaluate(knn, 2)
+            f.write(', '.join([str(k), str(acc), str(err)]) + '\n')
+            acc_list.append(acc)
+            err_list.append(err_list)
 
-with open('experiment12.csv', 'w') as f:
-    f.write(', '.join([str(1), str(tree_acc), str(tree_err)]) + '\n')
-    f.write(', '.join([str(2), str(percp_acc), str(percp_err)]) + '\n')
+    tf = tree_factory()
+    tree_acc, tree_err = evaluate(tf, 2)
+
+    pf = perceptron_factory()
+    percp_acc, percp_err = evaluate(pf, 2)
+
+    with open('experiment12.csv', 'w') as f:
+        f.write(', '.join([str(1), str(tree_acc), str(tree_err)]) + '\n')
+        f.write(', '.join([str(2), str(percp_acc), str(percp_err)]) + '\n')
+
+
+if __name__ == "__main__":
+    main()
+
